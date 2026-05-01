@@ -1,0 +1,59 @@
+# Paper Extract Pipeline 配置文件 (Gemini 版本)
+
+# 全局 API 配置（Gemini）
+api:
+  model: "gemini-3-pro-preview"
+  api_key_env: "GEMINI_API_KEY"  # 从此环境变量读取 API Key
+
+# 规划阶段（交互式生成关键要素框架）
+planning:
+  enabled: true                # 是否启用
+  save_framework: true         # 是否保存框架到文件（便于调试）
+  framework_file: "framework.json"  # 框架保存路径（相对于 output.dir）
+
+# Schema 演化阶段（PDF 列表，轮询演化）
+schema_evolution:
+  enabled: true              # 是否启用
+  rounds: 10                  # 演化轮数（必须能被 PDF 数量整除）
+  # initial_schema: ""       # 初始 schema 文件路径（可选）
+  input:
+    path:
+      - "./pdf/A highly efficient bi-functional zeolite catalyst for low temperature catalytic cracking of n-octane to produce propylene Joint contribution of nanogold and dealumination.pdf"
+      - "./pdf/Carbocation chemistry confined in zeolites spectroscopic and theoretical characterizations.pdf"
+      - "./pdf/Comparative Technical, Economic, and Environmental Analysis of Different Cyanamide Production Processes Optimized through Heat Integration Design.pdf"
+      - "./pdf/Conversion of Polypropylene to Light Olefins by HMFI Catalysts below Pyrolytic Temperature Catalytic, Spectroscopic, and Theoretical Studies.pdf"
+      - "./pdf/First-principles microkinetic analysis of Lewis acid sites in Zn-ZSM-5 for alkane dehydrogenation and its implication to methanol-to-aromatics conversion.pdf"
+      - "./pdf/Highly efficient catalytic propane dehydrogenation driven by MFI zeolite defect sites.pdf"
+      - "./pdf/Insight into induction period of methanol conversion reaction Reactivity of ethene-precursors over H-ZSM-5 zeolite is independent of Brønsted acid site density.pdf"
+      - "./pdf/Reaction Pathways and Rate-Determining Steps in Reactions of Alkanes on H-ZSM5 and ZnH-ZSM5 Catalysts.pdf"
+      - "./pdf/Recent progress in catalytic deoxygenation of biomass pyrolysis oil using microporous zeolites for green fuels production.pdf"
+      - "./pdf/Structures and Reaction Mechanisms of Propene Oxide Isomerization on H-ZSM-5 An ONIOM Study.pdf"
+# 数据抽取阶段（目录扫描）
+extraction:
+  enabled: true              # 是否启用
+  keep_temp: true            # 保留中间文件
+  schema_file: "./output/schema.final.json"  # 仅抽取模式时，指定已有 schema 文件
+  input:
+    path: "./pdf"            # 目录路径
+    pattern: "*.pdf"         # 匹配模式
+
+# 审核阶段
+review:
+  enabled: true              # 是否启用审核
+  max_retries: 2             # 大错误最大重抽次数
+  evaluation_log: "file_eva.log"  # 评价日志文件名（相对于 output.dir）
+  
+  # 单阶段单文件审核（调试用）
+  input:
+    pdf_file: "./pdf/my.pdf"                        # 源 PDF 文件
+    extract_json: "./output/my/my_extract.json"     # 对应的抽取结果 JSON
+    schema_file: "./output/schema.final.json"       # Schema 文件
+
+# 输出配置
+output:
+  dir: "./output"            # 输出根目录
+  schema_file: "schema.final.json"  # schema 输出文件名
+
+# 并发控制
+concurrency:
+  max_workers: 1            # 并行处理 PDF 数量

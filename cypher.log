@@ -1,0 +1,2717 @@
+2026-02-02 18:13:41,390 | Query: 哪些催化剂具有Pt这个活性位点
+2026-02-02 18:13:41,390 | Step 1: 模糊搜索名称包含 Pt 的 activeSite
+2026-02-02 18:13:41,390 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite) WHERE toLower(a.name) CONTAINS toLower("Pt") RETURN z, a LIMIT 100
+2026-02-02 18:13:41,390 | ------------------------------------------------------------
+2026-02-02 20:57:53,662 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 20:57:53,662 | Step 1: 查找从C3H8(g)到H2(g)的反应路径
+2026-02-02 20:57:53,662 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[*1..10]->(end:molecular {name: "H2(g)"}) RETURN p LIMIT 10
+2026-02-02 20:57:53,662 | ------------------------------------------------------------
+2026-02-02 20:59:21,306 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 20:59:21,306 | Step 2: 查找activeSite Pt所属的zeolite
+2026-02-02 20:59:21,306 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite {name: "Pt"}) RETURN z, a
+2026-02-02 20:59:21,306 | ------------------------------------------------------------
+2026-02-02 21:21:19,156 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:21:19,156 | Step 1: 查找分子 C3H8(g) 作为反应物参与的反应及完整信息
+2026-02-02 21:21:19,156 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[*1..10]->(end:molecular {name: "H2(g)"}) WHERE all(i in range(0, length(p)-1) | let rel = relationships(p)[i], prev = nodes(p)[i], next = nodes(p)[i+1] in (prev:molecular AND next:reactionNode AND type(rel) = "LINKS") OR (prev:reactionNode AND next:molecular AND type(rel) = "LINKS") ) UNWIND nodes(p) as node WITH DISTINCT p, node WHERE node:reactionNode OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node) OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site) OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode) RETURN p, collect(DISTINCT site) as active_sites, collect(DISTINCT z) as catalysts, collect(DISTINCT prop) as reaction_properties LIMIT 100
+2026-02-02 21:21:19,156 | ------------------------------------------------------------
+2026-02-02 21:22:18,009 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:22:18,009 | Step 2: 查找分子 C3H8(g) 作为反应物参与的反应及完整信息
+2026-02-02 21:22:18,009 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[*1..10]->(end:molecular {name: "H2(g)"}) WHERE all(rel IN relationships(p) | (startNode(rel):molecular AND endNode(rel):reactionNode) OR (startNode(rel):reactionNode AND endNode(rel):molecular) ) WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactionNodes UNWIND reactionNodes AS r OPTIONAL MATCH (a:activeSite)-[:LINKS]->(r) OPTIONAL MATCH (z:zeolite)-[:LINKS]->(a) OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode) RETURN p, collect(DISTINCT a) AS active_sites, collect(DISTINCT z) AS catalysts, collect(DISTINCT prop) AS reaction_properties LIMIT 100
+2026-02-02 21:22:18,009 | ------------------------------------------------------------
+2026-02-02 21:23:22,746 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:23:22,746 | Step 3: 查找分子C3H8(g)作为反应物参与的反应及完整信息
+2026-02-02 21:23:22,746 |   Cypher 1: MATCH path = (start:molecular {name: "C3H8(g)"})-[:LINKS*1..5]->(end:molecular {name: "H2(g)"}) WHERE all(rel in relationships(path) | (startNode(rel):molecular AND endNode(rel):reactionNode) OR (startNode(rel):reactionNode AND endNode(rel):molecular) ) OPTIONAL MATCH (r:reactionNode) WHERE r IN nodes(path) OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r) OPTIONAL MATCH (r)-[:LINKS]->(product:molecular) OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r) OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site) OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode) RETURN path, collect(DISTINCT reactant) AS reactants, collect(DISTINCT product) AS products, collect(DISTINCT site) AS active_sites, collect(DISTINCT z) AS zeolites, collect(DISTINCT prop) AS reaction_properties LIMIT 100
+2026-02-02 21:23:22,746 | ------------------------------------------------------------
+2026-02-02 21:24:04,541 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:24:04,541 | Step 4: 查找从C3H8(g)到H2(g)的反应路径
+2026-02-02 21:24:04,541 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[*1..10]->(end:molecular {name: "H2(g)"}) WHERE all(rel IN relationships(p) | type(rel) = "LINKS") RETURN p LIMIT 100
+2026-02-02 21:24:04,541 | ------------------------------------------------------------
+2026-02-02 21:24:31,259 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:24:31,259 | Step 5: 查找从C3H8(g)到H2(g)的反应路径
+2026-02-02 21:24:31,259 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[:LINKS*1..6]->(end:molecular {name: "H2(g)"}) RETURN p LIMIT 10
+2026-02-02 21:24:31,259 | ------------------------------------------------------------
+2026-02-02 21:31:50,951 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:31:50,951 | Step 1: 查找分子 C3H8(g) 作为反应物参与的反应及完整信息
+2026-02-02 21:31:50,951 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[:LINKS*1..5]->(end:molecular {name: "H2(g)"}) WHERE all(rel in relationships(p) | (startNode(rel):molecular AND endNode(rel):reactionNode) OR (startNode(rel):reactionNode AND endNode(rel):molecular) ) OPTIONAL MATCH (r:reactionNode) WHERE r IN nodes(p) OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r) OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site) OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode) RETURN p, collect(DISTINCT r) as reaction_nodes, collect(DISTINCT site) as active_sites, collect(DISTINCT z) as catalysts, collect(DISTINCT prop) as reaction_properties LIMIT 10
+2026-02-02 21:31:50,951 | ------------------------------------------------------------
+2026-02-02 21:32:49,522 | Query: 从C3H8(g)生成H2(g)的完整反应链路
+2026-02-02 21:32:49,522 | Step 2: 查找分子 C3H8(g) 作为反应物参与的反应及完整信息
+2026-02-02 21:32:49,522 |   Cypher 1: MATCH path = (start:molecular {name: "C3H8(g)"})-[:LINKS*1..10]->(end:molecular {name: "H2(g)"}) WHERE all(rel in relationships(path) where (startNode(rel):molecular and endNode(rel):reactionNode) or (startNode(rel):reactionNode and endNode(rel):molecular)) OPTIONAL MATCH (r:reactionNode)-[:LINKS]->(prop:propertyNode) WHERE r IN nodes(path) OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r:reactionNode) WHERE r IN nodes(path) OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site) RETURN path, collect(DISTINCT prop) as reaction_properties, collect(DISTINCT site) as active_sites, collect(DISTINCT z) as catalysts LIMIT 100
+2026-02-02 21:32:49,522 | ------------------------------------------------------------
+2026-02-03 14:06:40,570 | Query: 从C3H8(g)生成到H2(g)的完整反应链路
+2026-02-03 14:06:40,570 | Step 1: 查找分子C3H8(g)作为反应物参与的反应及完整信息
+2026-02-03 14:06:40,570 |   Cypher 1: MATCH p = (start:molecular {name: "C3H8(g)"})-[:LINKS*1..5]->(end:molecular {name: "H2(g)"})
+OPTIONAL MATCH (r:reactionNode) WHERE r IN nodes(p)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN p, collect(DISTINCT reactant) as reactants, collect(DISTINCT product) as products, collect(DISTINCT site) as active_sites, collect(DISTINCT z) as catalysts, collect(DISTINCT prop) as reaction_properties
+LIMIT 10
+2026-02-03 14:06:40,570 | ------------------------------------------------------------
+2026-02-03 14:23:59,002 | Query: 溯源生成H2(g)的完整反应链路
+2026-02-03 14:23:59,002 | Step 1: 溯源查找生成H2(g)的反应及完整信息
+2026-02-03 14:23:59,002 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "H2(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(a)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as active_site_paths, collect(DISTINCT p4) as zeolite_paths, collect(DISTINCT p5) as reaction_property_paths
+LIMIT 100
+2026-02-03 14:23:59,013 | ------------------------------------------------------------
+2026-02-03 14:25:54,320 | Query: 溯源生成H2(g)的完整反应链路
+2026-02-03 14:25:54,320 | Step 2: 溯源查找生成H2*的反应及完整信息
+2026-02-03 14:25:54,320 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "H2(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(p:propertyNode)
+OPTIONAL MATCH p6 = (r2:reactionNode)-[:LINKS]->(h2star:molecular {name: "H2*"})
+OPTIONAL MATCH p7 = (h2star)-[:LINKS]->(r)
+OPTIONAL MATCH p8 = (reactant2:molecular)-[:LINKS]->(r2)
+OPTIONAL MATCH p9 = (site2:activeSite)-[:LINKS]->(r2)
+OPTIONAL MATCH p10 = (z2:zeolite)-[:LINKS]->(site2)
+OPTIONAL MATCH p11 = (r2)-[:LINKS]->(p2:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as active_site_paths, collect(DISTINCT p4) as zeolite_paths, collect(DISTINCT p5) as reaction_properties, collect(DISTINCT p6) as h2star_generation_paths, collect(DISTINCT p7) as h2star_to_h2g_paths, collect(DISTINCT p8) as h2star_reactant_paths, collect(DISTINCT p9) as h2star_active_site_paths, collect(DISTINCT p10) as h2star_zeolite_paths, collect(DISTINCT p11) as h2star_reaction_properties
+LIMIT 100
+2026-02-03 14:25:54,320 | ------------------------------------------------------------
+2026-02-03 14:26:33,131 | Query: 溯源生成H2(g)的完整反应链路
+2026-02-03 14:26:33,132 | Step 3: 溯源查找生成H2*的反应及完整信息
+2026-02-03 14:26:33,132 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "H2*"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(a)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(p:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, p3, p4, collect(DISTINCT p5) as reaction_property_paths
+LIMIT 100
+2026-02-03 14:26:33,132 | ------------------------------------------------------------
+2026-02-03 14:27:13,587 | Query: 溯源生成H2(g)的完整反应链路
+2026-02-03 14:27:13,587 | Step 4: 溯源查找生成Si-OH的反应及完整信息
+2026-02-03 14:27:13,587 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "Si-OH"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(p:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, p3, p4, collect(DISTINCT p5) as reaction_properties
+LIMIT 100
+2026-02-03 14:27:13,587 | ------------------------------------------------------------
+2026-02-03 14:28:13,424 | Query: 溯源生成H2(g)的完整反应链路
+2026-02-03 14:28:13,424 | Step 5: 溯源查找生成H2*的反应及完整信息
+2026-02-03 14:28:13,424 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "H2(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(a)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(p:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as active_site_paths, collect(DISTINCT p4) as zeolite_paths, collect(DISTINCT p5) as reaction_property_paths
+LIMIT 100
+2026-02-03 14:28:13,424 | ------------------------------------------------------------
+2026-02-04 14:00:49,645 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:00:49,646 | Step 1: 查找节点R1[23]
+2026-02-04 14:00:49,646 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"})
+MATCH (a:activeSite)-[:LINKS]->(r)
+MATCH (z:zeolite)-[:LINKS]->(a)
+MATCH p1 = (z)-[:LINKS]->(a':activeSite)-[:LINKS]->(r':reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r')
+OPTIONAL MATCH p3 = (r')-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (r')-[:LINKS]->(p:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths, collect(DISTINCT p4) as reaction_properties
+LIMIT 100;
+2026-02-04 14:00:49,647 | ------------------------------------------------------------
+2026-02-04 14:02:10,411 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:02:10,412 | Step 2: 查找节点R1[23]
+2026-02-04 14:02:10,412 |   Cypher 1: MATCH (r_target:reactionNode {name: "R1[23]"})
+MATCH (a_target:activeSite)-[:LINKS]->(r_target)
+MATCH (z:zeolite)-[:LINKS]->(a_target)
+MATCH p_catalyst_reaction = (z)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p_reactants = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p_products = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p_reaction_props = (r)-[:LINKS]->(prop:propertyNode)
+RETURN p_catalyst_reaction, collect(DISTINCT p_reactants) as reactant_paths, collect(DISTINCT p_products) as product_paths, collect(DISTINCT p_reaction_props) as reaction_property_paths
+LIMIT 100
+2026-02-04 14:02:10,413 | ------------------------------------------------------------
+2026-02-04 14:24:21,342 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:24:21,344 | Step 1: 查找节点R1[23]
+2026-02-04 14:24:21,344 |   Cypher 1: MATCH (r_target:reactionNode {name: "R1[23]"}),
+      (a_target:activeSite)-[:LINKS]->(r_target),
+      (z:zeolite)-[:LINKS]->(a_target),
+      (z)-[:LINKS]->(a:activeSite),
+      (a)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (product:molecular)<-[:LINKS]-(r)
+OPTIONAL MATCH (prop:propertyNode)<-[:LINKS]-(r)
+RETURN z.name AS catalyst, a.name AS active_site, r.name AS reaction,
+       COLLECT(DISTINCT reactant.name) AS reactants,
+       COLLECT(DISTINCT product.name) AS products,
+       COLLECT(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-04 14:24:21,345 | ------------------------------------------------------------
+2026-02-04 14:25:33,532 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:25:33,533 | Step 2: 模糊搜索名称包含R1[23]的reactionNode
+2026-02-04 14:25:33,534 |   Cypher 1: MATCH (r:reactionNode)
+WHERE toLower(r.name) CONTAINS toLower("R1[23]")
+OPTIONAL MATCH p_catalyst = (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p_reactant = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p_product = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p_property = (r)-[:LINKS]->(prop:propertyNode)
+RETURN p_catalyst, p_reactant, p_product, p_property
+LIMIT 100
+2026-02-04 14:25:33,534 | ------------------------------------------------------------
+2026-02-04 14:26:35,176 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:26:35,176 | Step 3: 查找反应R1[23]对应的活性位点及所属催化剂
+2026-02-04 14:26:35,177 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+RETURN z.name AS catalyst_name, a.name AS active_site_name, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products
+LIMIT 100
+2026-02-04 14:26:35,178 | ------------------------------------------------------------
+2026-02-04 14:27:17,341 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:27:17,342 | Step 4: 模糊搜索名称包含R1[23]的reactionNode
+2026-02-04 14:27:17,342 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths, collect(DISTINCT p4) as reaction_properties
+LIMIT 100
+2026-02-04 14:27:17,342 | ------------------------------------------------------------
+2026-02-04 14:28:47,573 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:28:47,574 | Step 5: 模糊搜索名称包含R1[23]的reactionNode
+2026-02-04 14:28:47,574 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"}),
+p2 = (z)-[:LINKS]->(a2:activeSite)-[:LINKS]->(r2:reactionNode)
+OPTIONAL MATCH p3 = (reactant:molecular)-[:LINKS]->(r2)
+OPTIONAL MATCH p4 = (r2)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p5 = (r2)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as catalyst_involved_reactions, collect(DISTINCT p3) as reactant_paths, collect(DISTINCT p4) as product_paths, collect(DISTINCT p5) as reaction_property_paths
+LIMIT 100
+2026-02-04 14:28:47,575 | ------------------------------------------------------------
+2026-02-04 14:36:07,498 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:36:07,498 | Step 1: 查找节点R1[23]
+2026-02-04 14:36:07,499 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+WITH DISTINCT z
+MATCH p1 = (z)-[:LINKS]->(site2:activeSite)-[:LINKS]->(r2:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r2)
+OPTIONAL MATCH p3 = (r2)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (r2)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths, collect(DISTINCT p4) as reaction_properties
+LIMIT 100
+2026-02-04 14:36:07,499 | ------------------------------------------------------------
+2026-02-04 14:37:13,439 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:37:13,439 | Step 2: 模糊搜索名称包含R1[23]的reactionNode
+2026-02-04 14:37:13,439 |   Cypher 1: MATCH (r:reactionNode)
+WHERE toLower(r.name) CONTAINS toLower("R1[23]")
+OPTIONAL MATCH catalyst_path = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH reactant_path = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH product_path = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH reaction_prop_path = (r)-[:LINKS]->(prop:propertyNode)
+RETURN r, collect(DISTINCT catalyst_path) AS catalyst_paths, collect(DISTINCT reactant_path) AS reactant_paths, collect(DISTINCT product_path) AS product_paths, collect(DISTINCT reaction_prop_path) AS reaction_property_paths
+LIMIT 100
+2026-02-04 14:37:13,439 | ------------------------------------------------------------
+2026-02-04 14:38:05,213 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:38:05,213 | Step 3: 查找反应R1[23]关联的activeSite及所属的zeolite催化剂
+2026-02-04 14:38:05,213 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+RETURN z, a, r LIMIT 100
+2026-02-04 14:38:05,213 | ------------------------------------------------------------
+2026-02-04 14:40:17,962 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:40:17,962 | Step 4: 查找节点R1[23]的直接邻居
+2026-02-04 14:40:17,963 |   Cypher 1: MATCH p_catalyst_link = (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"}),
+      p_reaction = (z)-[:LINKS]->(a2:activeSite)-[:LINKS]->(r2:reactionNode)
+OPTIONAL MATCH p_reactants = (m1:molecular)-[:LINKS]->(r2)
+OPTIONAL MATCH p_products = (r2)-[:LINKS]->(m2:molecular)
+OPTIONAL MATCH p_reaction_props = (r2)-[:LINKS]->(p:propertyNode)
+RETURN p_catalyst_link, COLLECT(DISTINCT p_reaction) AS reaction_paths, COLLECT(DISTINCT p_reactants) AS reactant_paths, COLLECT(DISTINCT p_products) AS product_paths, COLLECT(DISTINCT p_reaction_props) AS reaction_property_paths
+LIMIT 100
+2026-02-04 14:40:17,963 | ------------------------------------------------------------
+2026-02-04 14:41:29,032 | Query: 查询R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:41:29,032 | Step 5: 查找节点R1[23]的直接邻居
+2026-02-04 14:41:29,033 |   Cypher 1: MATCH (r_target:reactionNode {name: "R1[23]"}),
+      (a:activeSite)-[:LINKS]->(r_target),
+      (z:zeolite)-[:LINKS]->(a),
+      (a_all:activeSite)-[:LINKS]->(r:reactionNode),
+      (z)-[:LINKS]->(a_all)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (r)-[:LINKS]->(p:propertyNode)
+RETURN DISTINCT z.name AS catalyst_name, a_all.name AS active_site, r.name AS reaction_name, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products, collect(DISTINCT p.name) AS reaction_properties
+LIMIT 100
+2026-02-04 14:41:29,034 | ------------------------------------------------------------
+2026-02-04 14:45:22,420 | Query: 查询反应节点R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:45:22,421 | Step 1: 查找反应节点R1[23]关联的zeolite催化剂
+2026-02-04 14:45:22,422 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"})
+MATCH (site:activeSite)-[:LINKS]->(r)
+MATCH (z:zeolite)-[:LINKS]->(site)
+MATCH p1 = (z)-[:LINKS]->(site2:activeSite)-[:LINKS]->(r2:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r2)
+OPTIONAL MATCH p3 = (r2)-[:LINKS]->(product:molecular)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths
+LIMIT 100
+2026-02-04 14:45:22,422 | ------------------------------------------------------------
+2026-02-04 14:46:19,707 | Query: 查询反应节点R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:46:19,707 | Step 2: 查找反应节点R1[23]关联的活性位点和催化剂
+2026-02-04 14:46:19,708 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"})
+MATCH (a:activeSite)-[:LINKS]->(r)
+MATCH (z:zeolite)-[:LINKS]->(a)
+MATCH p_catalyst_reaction = (z)-[:LINKS]->(a_site:activeSite)-[:LINKS]->(r_all:reactionNode)
+OPTIONAL MATCH p_reactants = (m_react:molecular)-[:LINKS]->(r_all)
+OPTIONAL MATCH p_products = (r_all)-[:LINKS]->(m_prod:molecular)
+RETURN DISTINCT p_catalyst_reaction, collect(DISTINCT p_reactants) AS reactant_paths, collect(DISTINCT p_products) AS product_paths
+LIMIT 100
+2026-02-04 14:46:19,708 | ------------------------------------------------------------
+2026-02-04 14:47:23,771 | Query: 查询反应节点R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:47:23,771 | Step 3: 查找节点 R1[23]
+2026-02-04 14:47:23,772 |   Cypher 1: MATCH (r1:reactionNode {name: "R1[23]"}),
+      (site:activeSite)-[:LINKS]->(r1),
+      (z:zeolite)-[:LINKS]->(site),
+      p1 = (z)-[:LINKS]->(all_sites:activeSite)-[:LINKS]->(all_r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(all_r)
+OPTIONAL MATCH p3 = (all_r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (all_r)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths, collect(DISTINCT p4) as property_paths
+LIMIT 100
+2026-02-04 14:47:23,773 | ------------------------------------------------------------
+2026-02-04 14:48:19,045 | Query: 查询反应节点R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:48:19,046 | Step 4: 查找节点 R1[23]
+2026-02-04 14:48:19,046 |   Cypher 1: MATCH (r_target:reactionNode {name: "R1[23]"})
+MATCH (a:activeSite)-[:LINKS]->(r_target)
+MATCH (z:zeolite)-[:LINKS]->(a)
+MATCH p1 = (z)-[:LINKS]->(a2:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN p1, collect(DISTINCT p2) as reactant_paths, collect(DISTINCT p3) as product_paths, collect(DISTINCT p4) as reaction_properties
+LIMIT 100
+2026-02-04 14:48:19,046 | ------------------------------------------------------------
+2026-02-04 14:49:13,216 | Query: 查询反应节点R1[23]的催化剂涉及到的完整反应
+2026-02-04 14:49:13,216 | Step 5: 模糊搜索名称包含 R1[23] 的 reactionNode
+2026-02-04 14:49:13,216 |   Cypher 1: MATCH (r:reactionNode)
+WHERE toLower(r.name) CONTAINS toLower("R1[23]")
+OPTIONAL MATCH p1 = (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p2 = (z:zeolite)-[:LINKS]->(a)
+OPTIONAL MATCH p3 = (react:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (r)-[:LINKS]->(prod:molecular)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN r, collect(DISTINCT p1) as active_site_paths, collect(DISTINCT p2) as catalyst_paths, collect(DISTINCT p3) as reactant_paths, collect(DISTINCT p4) as product_paths, collect(DISTINCT p5) as reaction_property_paths
+LIMIT 100
+2026-02-04 14:49:13,216 | ------------------------------------------------------------
+2026-02-04 15:33:23,859 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:33:23,860 | Step 1: 查找节点R1[23]
+2026-02-04 15:33:23,861 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"})
+RETURN r
+LIMIT 100
+2026-02-04 15:33:23,861 | ------------------------------------------------------------
+2026-02-04 15:33:53,742 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:33:53,743 | Step 2: 查找反应节点R1[23]的直接邻居
+2026-02-04 15:33:53,743 |   Cypher 1: MATCH p1 = (r:reactionNode {name: "R1[23]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-04 15:33:53,743 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(r:reactionNode {name: "R1[23]"}) RETURN p2 LIMIT 50
+2026-02-04 15:33:53,744 | ------------------------------------------------------------
+2026-02-04 15:34:31,334 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:34:31,334 | Step 3: 查找活性位点Brønsted acid site[23]的直接邻居
+2026-02-04 15:34:31,334 |   Cypher 1: MATCH p1 = (site:activeSite {name: "Brønsted acid site[23]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-04 15:34:31,335 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(site:activeSite {name: "Brønsted acid site[23]"}) RETURN p2 LIMIT 50
+2026-02-04 15:34:31,335 | ------------------------------------------------------------
+2026-02-04 15:35:50,703 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:35:50,703 | Step 4: 查找该沸石催化剂的完整反应网络（含反应物和生成物）
+2026-02-04 15:35:50,703 |   Cypher 1: MATCH (site:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+MATCH (z:zeolite)-[:LINKS]->(site)
+WITH DISTINCT z
+OPTIONAL MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-04 15:35:50,704 | ------------------------------------------------------------
+2026-02-04 15:36:45,587 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:36:45,587 | Step 5: 查找活性位点Brønsted acid site[23]的直接邻居
+2026-02-04 15:36:45,587 |   Cypher 1: MATCH p1 = (site:activeSite {name: "Brønsted acid site[23]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-04 15:36:45,587 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(site:activeSite {name: "Brønsted acid site[23]"}) RETURN p2 LIMIT 50
+2026-02-04 15:36:45,588 | ------------------------------------------------------------
+2026-02-04 15:45:07,096 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:45:07,096 | Step 1: 查找节点 R1[23]
+2026-02-04 15:45:07,096 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"}) RETURN r LIMIT 100
+2026-02-04 15:45:07,096 |   Cypher 2: MATCH (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"}) RETURN z, site LIMIT 100
+2026-02-04 15:45:07,096 |   Cypher 3: MATCH (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+WITH DISTINCT z
+MATCH p1 = (z)-[:LINKS]->(site':activeSite)-[:LINKS]->(r':reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r')
+OPTIONAL MATCH p3 = (r')-[:LINKS]->(product:molecular)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths, collect(DISTINCT p2) AS reactant_paths, collect(DISTINCT p3) AS product_paths LIMIT 100
+2026-02-04 15:45:07,096 | ------------------------------------------------------------
+2026-02-04 15:46:02,519 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:46:02,519 | Step 2: 查找反应节点R1[23]的直接邻居
+2026-02-04 15:46:02,519 |   Cypher 1: MATCH p1 = (r:reactionNode {name: "R1[23]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-04 15:46:02,519 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(r:reactionNode {name: "R1[23]"}) RETURN p2 LIMIT 50
+2026-02-04 15:46:02,519 | ------------------------------------------------------------
+2026-02-04 15:48:52,009 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:48:52,009 | Step 1: 查找节点 R1[23]
+2026-02-04 15:48:52,009 |   Cypher 1: MATCH (r:reactionNode {name: "R1[23]"})
+RETURN r
+LIMIT 100
+2026-02-04 15:48:52,009 |   Cypher 2: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+RETURN DISTINCT z AS catalyst
+LIMIT 100
+2026-02-04 15:48:52,010 |   Cypher 3: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE z IN (MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"}) RETURN DISTINCT z)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT r.name AS reaction_name, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products, collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-04 15:48:52,010 | ------------------------------------------------------------
+2026-02-04 15:52:33,023 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:52:33,023 | Step 2: 查找催化反应节点R1[23]的沸石催化剂
+2026-02-04 15:52:33,023 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r_target:reactionNode {name: "R1[23]"})
+WITH DISTINCT z
+MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT z) AS catalysts,
+       collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-04 15:52:33,023 | ------------------------------------------------------------
+2026-02-04 15:53:34,052 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:53:34,052 | Step 3: 查找 R1[23] 的直接邻居
+2026-02-04 15:53:34,052 |   Cypher 1: MATCH p1 = (r:reactionNode {name: "R1[23]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-04 15:53:34,052 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(r:reactionNode {name: "R1[23]"}) RETURN p2 LIMIT 50
+2026-02-04 15:53:34,052 | ------------------------------------------------------------
+2026-02-04 15:54:04,911 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:54:04,911 | Step 4: 查找活性位点 Brønsted acid site[23] 对应的沸石催化剂
+2026-02-04 15:54:04,911 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(site:activeSite {name: "Brønsted acid site[23]"})
+RETURN DISTINCT z
+LIMIT 100
+2026-02-04 15:54:04,911 | ------------------------------------------------------------
+2026-02-04 15:55:35,967 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:55:35,967 | Step 5: 模糊搜索名称包含Brønsted acid site的activeSite
+2026-02-04 15:55:35,967 |   Cypher 1: MATCH (site:activeSite)
+WHERE toLower(site.name) CONTAINS toLower("Brønsted acid site")
+RETURN site
+LIMIT 20
+2026-02-04 15:55:35,967 | ------------------------------------------------------------
+2026-02-04 15:56:32,843 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:56:32,843 | Step 6: 查找活性位点 Brønsted acid site[23] 对应的沸石催化剂
+2026-02-04 15:56:32,843 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(site:activeSite {name: "Brønsted acid site[23]"})
+RETURN z
+LIMIT 100
+2026-02-04 15:56:32,843 | ------------------------------------------------------------
+2026-02-04 15:57:07,844 | Query: 查询反应节点R1[23]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 15:57:07,844 | Step 7: 查找催化反应节点 R1[23] 的活性位点
+2026-02-04 15:57:07,844 |   Cypher 1: MATCH (site:activeSite)-[:LINKS]->(r:reactionNode {name: "R1[23]"})
+RETURN site
+LIMIT 100
+2026-02-04 15:57:07,844 | ------------------------------------------------------------
+2026-02-04 16:04:37,304 | Query: 查询反应节点R1[18]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 16:04:37,304 | Step 1: 查找节点R1[18]
+2026-02-04 16:04:37,304 |   Cypher 1: MATCH (r:reactionNode {name: "R1[18]"})
+RETURN r
+LIMIT 100
+2026-02-04 16:04:37,304 |   Cypher 2: MATCH (r:reactionNode {name: "R1[18]"})
+OPTIONAL MATCH (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(a)
+WITH DISTINCT z AS catalyst
+MATCH (catalyst)-[:LINKS]->(site:activeSite)-[:LINKS]->(reaction:reactionNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(reaction)
+OPTIONAL MATCH (reaction)-[:LINKS]->(product:molecular)
+RETURN catalyst, site, reaction, collect(DISTINCT reactant) AS reactants, collect(DISTINCT product) AS products
+LIMIT 100
+2026-02-04 16:04:37,304 | ------------------------------------------------------------
+2026-02-04 16:05:33,747 | Query: 查询反应节点R1[18]的催化剂，然后查这个催化剂涉及到的完整反应
+2026-02-04 16:05:33,748 | Step 2: 查找催化剂2.5Fe2.5Cu-SB@NB的完整反应网络（含反应物和生成物）
+2026-02-04 16:05:33,748 |   Cypher 1: MATCH p1 = (z:zeolite {name: "2.5Fe2.5Cu-SB@NB"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-04 16:05:33,748 | ------------------------------------------------------------
+2026-02-07 08:54:38,818 | Query: 查询反应R2[12]的催化剂
+2026-02-07 08:54:38,820 | Step 1: 查找节点R2[12]
+2026-02-07 08:54:38,820 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"}) RETURN r LIMIT 100
+2026-02-07 08:54:38,820 |   Cypher 2: MATCH (r:reactionNode {name: "R2[12]"})
+OPTIONAL MATCH (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(a)
+RETURN r.name AS reaction_name, collect(DISTINCT a.name) AS active_sites, collect(DISTINCT z.name) AS catalysts
+LIMIT 100
+2026-02-07 08:54:38,820 | ------------------------------------------------------------
+2026-02-07 08:55:33,685 | Query: 查询反应R2[12]的催化剂
+2026-02-07 08:55:33,685 | Step 2: 模糊搜索名称包含R2[12]的reactionNode
+2026-02-07 08:55:33,685 |   Cypher 1: MATCH (r:reactionNode)
+WHERE toLower(r.name) CONTAINS toLower("R2[12]")
+RETURN r
+LIMIT 20
+2026-02-07 08:55:33,685 |   Cypher 2: MATCH p = (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE toLower(r.name) CONTAINS toLower("R2[12]")
+RETURN p, z.name AS catalyst, r.name AS reaction
+LIMIT 100
+2026-02-07 08:55:33,685 | ------------------------------------------------------------
+2026-02-07 08:56:46,965 | Query: 查询反应R2[12]的催化剂
+2026-02-07 08:56:46,965 | Step 1: 查找节点 R2[12]
+2026-02-07 08:56:46,965 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"}) RETURN r LIMIT 100
+2026-02-07 08:56:46,965 |   Cypher 2: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R2[12]"})
+RETURN z AS catalyst, a AS active_site, r AS reaction
+LIMIT 100
+2026-02-07 08:56:46,965 | ------------------------------------------------------------
+2026-02-07 08:58:16,018 | Query: 查询反应R2[12]的催化剂
+2026-02-07 08:58:16,018 | Step 1: 查找节点 R2[12]
+2026-02-07 08:58:16,018 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"}) RETURN r LIMIT 100
+2026-02-07 08:58:16,018 |   Cypher 2: MATCH p = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode {name: "R2[12]"}) RETURN p LIMIT 100
+2026-02-07 08:58:16,018 | ------------------------------------------------------------
+2026-02-07 08:59:27,651 | Query: 查询反应R2[12]的催化剂
+2026-02-07 08:59:27,652 | Step 1: 查找节点 R2[12]
+2026-02-07 08:59:27,652 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"})
+RETURN r
+LIMIT 100
+2026-02-07 08:59:27,652 | ------------------------------------------------------------
+2026-02-07 09:00:03,768 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:00:03,768 | Step 2: 查找反应节点 R2[12] 的直接邻居
+2026-02-07 09:00:03,768 |   Cypher 1: MATCH p1 = (r:reactionNode {name: "R2[12]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 09:00:03,768 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(r:reactionNode {name: "R2[12]"}) RETURN p2 LIMIT 50
+2026-02-07 09:00:03,768 | ------------------------------------------------------------
+2026-02-07 09:00:33,429 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:00:33,429 | Step 3: 查找活性位点 Lewis acid site[@ZSM-5 Zeolite|12] 的直接邻居
+2026-02-07 09:00:33,429 |   Cypher 1: MATCH p1 = (site:activeSite {name: "Lewis acid site[@ZSM-5 Zeolite|12]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 09:00:33,429 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(site:activeSite {name: "Lewis acid site[@ZSM-5 Zeolite|12]"}) RETURN p2 LIMIT 50
+2026-02-07 09:00:33,429 | ------------------------------------------------------------
+2026-02-07 09:02:14,016 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:02:14,016 | Step 1: 查找节点 R2[12]
+2026-02-07 09:02:14,016 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"})
+RETURN r
+LIMIT 100
+2026-02-07 09:02:14,016 | ------------------------------------------------------------
+2026-02-07 09:02:50,810 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:02:50,810 | Step 2: 查找反应节点 R2[12] 的直接邻居
+2026-02-07 09:02:50,810 |   Cypher 1: MATCH p1 = (r:reactionNode {name: "R2[12]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 09:02:50,810 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(r:reactionNode {name: "R2[12]"}) RETURN p2 LIMIT 50
+2026-02-07 09:02:50,810 | ------------------------------------------------------------
+2026-02-07 09:03:20,670 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:03:20,670 | Step 3: 查找活性位点 Lewis acid site[@ZSM-5 Zeolite|12] 的直接邻居
+2026-02-07 09:03:20,670 |   Cypher 1: MATCH p1 = (site:activeSite {name: "Lewis acid site[@ZSM-5 Zeolite|12]"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 09:03:20,670 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(site:activeSite {name: "Lewis acid site[@ZSM-5 Zeolite|12]"}) RETURN p2 LIMIT 50
+2026-02-07 09:03:20,670 | ------------------------------------------------------------
+2026-02-07 09:04:48,373 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:04:48,373 | Step 1: 查找节点 R2[12]
+2026-02-07 09:04:48,373 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"})
+OPTIONAL MATCH (a:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(a)
+RETURN r, collect(DISTINCT a) AS active_sites, collect(DISTINCT z) AS catalysts
+LIMIT 100
+2026-02-07 09:04:48,373 | ------------------------------------------------------------
+2026-02-07 09:05:37,447 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:05:37,447 | Step 1: 查找节点 R2[12]
+2026-02-07 09:05:37,447 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"}) RETURN r LIMIT 100
+2026-02-07 09:05:37,447 |   Cypher 2: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R2[12]"}) RETURN DISTINCT z AS catalyst LIMIT 100
+2026-02-07 09:05:37,447 | ------------------------------------------------------------
+2026-02-07 09:06:53,446 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:06:53,446 | Step 1: 查找节点 R2[12]
+2026-02-07 09:06:53,446 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"})
+RETURN r
+LIMIT 100
+2026-02-07 09:06:53,446 | ------------------------------------------------------------
+2026-02-07 09:07:17,649 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:07:17,649 | Step 2: 查找反应节点 R2[12] 的直接邻居（入边，即催化该反应的活性位点）
+2026-02-07 09:07:17,649 |   Cypher 1: MATCH p = (site:activeSite)-[:LINKS]->(r:reactionNode {name: "R2[12]"})
+RETURN p
+LIMIT 100
+2026-02-07 09:07:17,649 | ------------------------------------------------------------
+2026-02-07 09:07:38,970 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:07:38,970 | Step 3: 查找活性位点 Lewis acid site[@ZSM-5 Zeolite|12] 对应的沸石催化剂
+2026-02-07 09:07:38,970 |   Cypher 1: MATCH (z:zeolite)-[:LINKS]->(a:activeSite {name: "Lewis acid site[@ZSM-5 Zeolite|12]"})
+RETURN z
+LIMIT 100
+2026-02-07 09:07:38,970 | ------------------------------------------------------------
+2026-02-07 09:09:08,046 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:09:08,046 | Step 1: 查找节点 R2[12]
+2026-02-07 09:09:08,046 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"})
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r)
+RETURN r, collect(DISTINCT z) AS catalysts, collect(DISTINCT a) AS active_sites
+LIMIT 100
+2026-02-07 09:09:08,046 | ------------------------------------------------------------
+2026-02-07 09:10:03,219 | Query: 查询反应R2[12]的催化剂
+2026-02-07 09:10:03,219 | Step 1: 查找节点 R2[12]
+2026-02-07 09:10:03,219 |   Cypher 1: MATCH (r:reactionNode {name: "R2[12]"}) RETURN r LIMIT 100
+2026-02-07 09:10:03,219 |   Cypher 2: MATCH (z:zeolite)-[:LINKS]->(a:activeSite)-[:LINKS]->(r:reactionNode {name: "R2[12]"}) RETURN z, a, r LIMIT 100
+2026-02-07 09:10:03,219 | ------------------------------------------------------------
+2026-02-07 09:12:30,822 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:12:30,822 | Step 1: 查找节点C4H8(g)
+2026-02-07 09:12:30,822 |   Cypher 1: MATCH (m:molecular {name: "C4H8(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 09:12:30,822 |   Cypher 2: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p6 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths,
+       collect(DISTINCT p6) AS reaction_property_paths
+LIMIT 100
+2026-02-07 09:12:30,822 |   Cypher 3: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths,
+       collect(DISTINCT p5) AS reaction_property_paths
+LIMIT 100
+2026-02-07 09:12:30,822 | ------------------------------------------------------------
+2026-02-07 09:13:24,826 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:13:24,826 | Step 1: 模糊搜索名称包含 C4H8(g) 的 molecular
+2026-02-07 09:13:24,826 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C4H8(g)")
+RETURN m
+LIMIT 20
+2026-02-07 09:13:24,827 | ------------------------------------------------------------
+2026-02-07 09:13:45,920 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:13:45,920 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:13:45,920 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:13:45,921 | ------------------------------------------------------------
+2026-02-07 09:14:42,325 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:14:42,325 | Step 1: 模糊搜索名称包含 C4H8(g) 的 molecular
+2026-02-07 09:14:42,325 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C4H8(g)")
+RETURN m
+LIMIT 20
+2026-02-07 09:14:42,325 | ------------------------------------------------------------
+2026-02-07 09:15:19,441 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:15:19,441 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:15:19,441 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:15:19,441 | ------------------------------------------------------------
+2026-02-07 09:15:50,100 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:15:50,100 | Step 3: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:15:50,100 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:15:50,100 | ------------------------------------------------------------
+2026-02-07 09:16:29,378 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:16:29,378 | Step 4: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:16:29,378 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:16:29,378 | ------------------------------------------------------------
+2026-02-07 09:17:03,735 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:17:03,735 | Step 5: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:17:03,735 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:17:03,735 | ------------------------------------------------------------
+2026-02-07 09:17:44,750 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:17:44,750 | Step 6: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:17:44,750 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:17:44,750 | ------------------------------------------------------------
+2026-02-07 09:19:04,128 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:19:04,128 | Step 1: 查找节点 C4H8(g)
+2026-02-07 09:19:04,128 |   Cypher 1: MATCH (m:molecular {name: "C4H8(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 09:19:04,128 | ------------------------------------------------------------
+2026-02-07 09:19:48,577 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:19:48,577 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:19:48,577 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:19:48,577 | ------------------------------------------------------------
+2026-02-07 09:20:32,745 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:20:32,746 | Step 3: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:20:32,746 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:20:32,746 | ------------------------------------------------------------
+2026-02-07 09:21:21,109 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:21:21,109 | Step 4: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:21:21,109 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p6 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths,
+       collect(DISTINCT p6) AS reaction_property_paths
+LIMIT 100
+2026-02-07 09:21:21,109 | ------------------------------------------------------------
+2026-02-07 09:22:10,734 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:22:10,734 | Step 5: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:22:10,734 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths,
+       collect(DISTINCT p5) AS reaction_property_paths
+LIMIT 100
+2026-02-07 09:22:10,734 | ------------------------------------------------------------
+2026-02-07 09:23:02,594 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:23:02,594 | Step 6: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:23:02,594 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:23:02,594 | ------------------------------------------------------------
+2026-02-07 09:23:36,044 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:23:36,044 | Step 7: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:23:36,044 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:23:36,044 | ------------------------------------------------------------
+2026-02-07 09:24:08,605 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:24:08,605 | Step 1: 模糊搜索名称包含C4H8(g)的molecular
+2026-02-07 09:24:08,605 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C4H8(g)")
+RETURN m
+LIMIT 20
+2026-02-07 09:24:08,605 | ------------------------------------------------------------
+2026-02-07 09:24:43,206 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:24:43,206 | Step 2: 查找分子C4H8(g)作为反应物参与的反应及完整信息
+2026-02-07 09:24:43,206 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:24:43,207 | ------------------------------------------------------------
+2026-02-07 09:25:17,172 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:25:17,172 | Step 3: 溯源查找生成C4H8(g)的反应及完整信息
+2026-02-07 09:25:17,172 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:25:17,172 | ------------------------------------------------------------
+2026-02-07 09:25:54,802 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:25:54,802 | Step 4: 查找分子C4H8(g)作为反应物参与的反应及完整信息
+2026-02-07 09:25:54,802 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:25:54,802 | ------------------------------------------------------------
+2026-02-07 09:26:34,393 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:26:34,393 | Step 5: 溯源查找生成C4H8(g)的反应及完整信息
+2026-02-07 09:26:34,393 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:26:34,393 | ------------------------------------------------------------
+2026-02-07 09:27:08,819 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:27:08,819 | Step 6: 查找分子C4H8(g)作为反应物参与的反应及完整信息
+2026-02-07 09:27:08,819 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:27:08,819 | ------------------------------------------------------------
+2026-02-07 09:27:49,693 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:27:49,693 | Step 7: 溯源查找生成C4H8(g)的反应及完整信息
+2026-02-07 09:27:49,693 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:27:49,693 | ------------------------------------------------------------
+2026-02-07 09:28:25,860 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:28:25,860 | Step 1: 查找节点 C4H8(g)
+2026-02-07 09:28:25,860 |   Cypher 1: MATCH (m:molecular {name: "C4H8(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 09:28:25,860 | ------------------------------------------------------------
+2026-02-07 09:28:57,572 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:28:57,572 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:28:57,572 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:28:57,572 | ------------------------------------------------------------
+2026-02-07 09:30:09,854 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:30:09,854 | Step 1: 模糊搜索名称包含 C4H8(g) 的 molecular
+2026-02-07 09:30:09,854 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C4H8(g)")
+RETURN m
+LIMIT 20
+2026-02-07 09:30:09,855 | ------------------------------------------------------------
+2026-02-07 09:30:43,945 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:30:43,945 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:30:43,945 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:30:43,945 | ------------------------------------------------------------
+2026-02-07 09:31:28,639 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:31:28,639 | Step 1: 查找节点 C4H8(g)
+2026-02-07 09:31:28,639 |   Cypher 1: MATCH (m:molecular {name: "C4H8(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 09:31:28,639 | ------------------------------------------------------------
+2026-02-07 09:32:07,152 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:32:07,152 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:32:07,153 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:32:07,153 | ------------------------------------------------------------
+2026-02-07 09:32:59,294 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:32:59,294 | Step 1: 查找节点 C4H8(g)
+2026-02-07 09:32:59,294 |   Cypher 1: MATCH (m:molecular {name: "C4H8(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 09:32:59,294 | ------------------------------------------------------------
+2026-02-07 09:33:27,502 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:33:27,503 | Step 2: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:33:27,503 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:33:27,503 | ------------------------------------------------------------
+2026-02-07 09:34:15,155 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:34:15,156 | Step 3: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:34:15,156 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:34:15,156 | ------------------------------------------------------------
+2026-02-07 09:34:51,811 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:34:51,811 | Step 4: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:34:51,811 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:34:51,812 | ------------------------------------------------------------
+2026-02-07 09:35:23,368 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:35:23,368 | Step 5: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:35:23,368 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:35:23,368 | ------------------------------------------------------------
+2026-02-07 09:36:00,676 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:36:00,676 | Step 6: 查找分子 C4H8(g) 作为反应物参与的反应及完整信息
+2026-02-07 09:36:00,676 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:36:00,676 | ------------------------------------------------------------
+2026-02-07 09:36:34,447 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:36:34,447 | Step 7: 溯源查找生成 C4H8(g) 的反应及完整信息
+2026-02-07 09:36:34,447 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C4H8(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:36:34,447 | ------------------------------------------------------------
+2026-02-07 09:37:06,267 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:37:06,267 | Step 1: 模糊搜索名称包含C4H8(g)的molecular
+2026-02-07 09:37:06,267 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C4H8(g)")
+RETURN m
+LIMIT 20
+2026-02-07 09:37:06,267 | ------------------------------------------------------------
+2026-02-07 09:37:49,357 | Query: 查找C4H8(g)参与的反应及完整信息
+2026-02-07 09:37:49,357 | Step 2: 查找分子C4H8(g)作为反应物参与的反应及完整信息
+2026-02-07 09:37:49,357 |   Cypher 1: MATCH p1 = (m:molecular {name: "C4H8(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 09:37:49,357 | ------------------------------------------------------------
+2026-02-07 09:38:37,973 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:38:37,973 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 09:38:37,974 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:38:37,974 | ------------------------------------------------------------
+2026-02-07 09:38:58,881 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:38:58,881 | Step 2: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:38:58,881 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:38:58,881 | ------------------------------------------------------------
+2026-02-07 09:39:26,380 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:39:26,380 | Step 3: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:39:26,380 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:39:26,380 | ------------------------------------------------------------
+2026-02-07 09:40:30,101 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:40:30,101 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 09:40:30,101 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:40:30,101 | ------------------------------------------------------------
+2026-02-07 09:40:59,019 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:40:59,019 | Step 2: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:40:59,019 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:40:59,019 | ------------------------------------------------------------
+2026-02-07 09:41:25,002 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:41:25,002 | Step 3: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:41:25,002 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:41:25,003 | ------------------------------------------------------------
+2026-02-07 09:42:57,361 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:42:57,361 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 09:42:57,361 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"}) RETURN z LIMIT 100
+2026-02-07 09:42:57,361 |   Cypher 2: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:42:57,361 | ------------------------------------------------------------
+2026-02-07 09:44:35,133 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:44:35,133 | Step 1: 模糊搜索名称包含H-ZSM-5的zeolite
+2026-02-07 09:44:35,134 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("H-ZSM-5")
+RETURN z
+LIMIT 20
+2026-02-07 09:44:35,134 | ------------------------------------------------------------
+2026-02-07 09:45:09,988 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:45:09,988 | Step 2: 查找节点 H-ZSM-5
+2026-02-07 09:45:09,988 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:45:09,988 | ------------------------------------------------------------
+2026-02-07 09:45:40,746 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:45:40,746 | Step 3: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:45:40,746 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:45:40,747 | ------------------------------------------------------------
+2026-02-07 09:46:21,587 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:46:21,588 | Step 4: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:46:21,588 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE z.name IN ["H-ZSM-5", "Zeolite H-ZSM-5"]
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:46:21,588 | ------------------------------------------------------------
+2026-02-07 09:47:31,759 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:47:31,759 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 09:47:31,759 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:47:31,759 | ------------------------------------------------------------
+2026-02-07 09:47:54,917 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:47:54,917 | Step 2: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:47:54,917 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:47:54,917 | ------------------------------------------------------------
+2026-02-07 09:48:25,765 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:48:25,766 | Step 3: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:48:25,766 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:48:25,766 | ------------------------------------------------------------
+2026-02-07 09:50:11,462 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:50:11,462 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 09:50:11,462 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"}) RETURN z LIMIT 100
+2026-02-07 09:50:11,463 |   Cypher 2: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:50:11,463 | ------------------------------------------------------------
+2026-02-07 09:51:20,936 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:51:20,936 | Step 1: 查找节点H-ZSM-5
+2026-02-07 09:51:20,937 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:51:20,937 | ------------------------------------------------------------
+2026-02-07 09:51:54,938 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:51:54,938 | Step 2: 查找催化剂H-ZSM-5的完整信息（含属性与活性位点）
+2026-02-07 09:51:54,938 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:51:54,938 | ------------------------------------------------------------
+2026-02-07 09:52:30,266 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:52:30,266 | Step 3: 查找催化剂H-ZSM-5的完整反应网络（含反应物和生成物）
+2026-02-07 09:52:30,266 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:52:30,266 | ------------------------------------------------------------
+2026-02-07 09:53:33,262 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:53:33,262 | Step 1: 模糊搜索名称包含 H-ZSM-5 的 zeolite
+2026-02-07 09:53:33,262 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("H-ZSM-5")
+RETURN z
+LIMIT 20
+2026-02-07 09:53:33,262 | ------------------------------------------------------------
+2026-02-07 09:54:00,634 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:54:00,634 | Step 2: 查找节点 H-ZSM-5
+2026-02-07 09:54:00,634 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:54:00,634 | ------------------------------------------------------------
+2026-02-07 09:54:24,553 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:54:24,553 | Step 3: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:54:24,553 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:54:24,553 | ------------------------------------------------------------
+2026-02-07 09:54:53,545 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:54:53,546 | Step 4: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:54:53,546 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:54:53,546 | ------------------------------------------------------------
+2026-02-07 09:55:49,245 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:55:49,245 | Step 1: 查找节点H-ZSM-5
+2026-02-07 09:55:49,245 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:55:49,245 | ------------------------------------------------------------
+2026-02-07 09:56:20,759 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:56:20,759 | Step 2: 查找催化剂H-ZSM-5的完整信息（含属性与活性位点）
+2026-02-07 09:56:20,760 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:56:20,760 | ------------------------------------------------------------
+2026-02-07 09:56:49,284 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:56:49,284 | Step 3: 查找催化剂H-ZSM-5的完整反应网络（含反应物和生成物）
+2026-02-07 09:56:49,284 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:56:49,284 | ------------------------------------------------------------
+2026-02-07 09:58:52,321 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:58:52,321 | Step 1: 查找节点 催化剂 H-ZSM-5
+2026-02-07 09:58:52,321 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 09:58:52,322 | ------------------------------------------------------------
+2026-02-07 09:59:13,648 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:59:13,648 | Step 2: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 09:59:13,649 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 09:59:13,649 | ------------------------------------------------------------
+2026-02-07 09:59:43,278 | Query: 查找催化剂H-ZSM-5参与的反应及完整信息
+2026-02-07 09:59:43,278 | Step 3: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 09:59:43,278 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 09:59:43,278 | ------------------------------------------------------------
+2026-02-07 10:01:20,074 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:01:20,074 | Step 1: 模糊搜索名称包含ZSM的zeolite
+2026-02-07 10:01:20,074 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+WITH z LIMIT 20
+MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name,
+       collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:01:20,074 | ------------------------------------------------------------
+2026-02-07 10:02:19,939 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:02:19,939 | Step 1: 模糊搜索名称包含ZSM的zeolite
+2026-02-07 10:02:19,939 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:02:19,939 | ------------------------------------------------------------
+2026-02-07 10:03:44,012 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:03:44,012 | Step 2: 查找所有名称包含ZSM的zeolite的完整信息（含属性与活性位点）
+2026-02-07 10:03:44,012 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH activeSitePath = (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH propertyPath = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+WITH z, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT {category: c.name, property: prop.name}) AS properties
+RETURN z.name AS zeolite_name, active_sites, properties
+LIMIT 20
+2026-02-07 10:03:44,012 | ------------------------------------------------------------
+2026-02-07 10:04:37,924 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:04:37,924 | Step 3: 查找所有名称包含ZSM的zeolite的完整反应网络（含反应物和生成物）
+2026-02-07 10:04:37,924 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:04:37,924 | ------------------------------------------------------------
+2026-02-07 10:05:28,624 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:05:28,624 | Step 1: 模糊搜索名称包含ZSM的zeolite
+2026-02-07 10:05:28,625 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name,
+       collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:05:28,625 | ------------------------------------------------------------
+2026-02-07 10:06:05,690 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:06:05,690 | Step 1: 模糊搜索名称包含ZSM的zeolite
+2026-02-07 10:06:05,690 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:06:05,690 | ------------------------------------------------------------
+2026-02-07 10:07:06,917 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:07:06,917 | Step 2: 查找所有名称包含ZSM的zeolite的完整信息（含属性与活性位点）
+2026-02-07 10:07:06,917 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT {category: c.name, property_value: prop.name}) AS properties
+LIMIT 100
+2026-02-07 10:07:06,917 | ------------------------------------------------------------
+2026-02-07 10:07:49,770 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:07:49,770 | Step 3: 查找所有名称包含ZSM的zeolite的完整反应网络（含反应物和生成物）
+2026-02-07 10:07:49,770 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:07:49,770 | ------------------------------------------------------------
+2026-02-07 10:08:40,010 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:08:40,010 | Step 1: 模糊搜索名称包含 ZSM 的 zeolite
+2026-02-07 10:08:40,010 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:08:40,010 | ------------------------------------------------------------
+2026-02-07 10:09:39,067 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:09:39,067 | Step 2: 查找所有名称包含ZSM的zeolite的完整信息（含属性与活性位点）
+2026-02-07 10:09:39,067 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH activeSitePath = (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH propertyPath = (z)-[:LINKS]->(cat:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name, collect(DISTINCT activeSitePath) AS active_site_paths, collect(DISTINCT propertyPath) AS property_paths
+LIMIT 100
+2026-02-07 10:09:39,067 | ------------------------------------------------------------
+2026-02-07 10:10:29,835 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:10:29,835 | Step 3: 查找所有名称包含ZSM的zeolite的完整反应网络（含反应物和生成物）
+2026-02-07 10:10:29,835 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT z.name) AS zeolite,
+       collect(DISTINCT p1) AS catalyst_to_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:10:29,835 | ------------------------------------------------------------
+2026-02-07 10:11:10,006 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:11:10,006 | Step 1: 模糊搜索名称包含 ZSM 的 zeolite
+2026-02-07 10:11:10,006 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:11:10,006 | ------------------------------------------------------------
+2026-02-07 10:12:47,127 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:12:47,127 | Step 2: 查找所有含ZSM的催化剂的完整信息（含属性与活性位点）
+2026-02-07 10:12:47,128 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS catalyst_name, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT {category: c.name, property: prop.name}) AS properties
+LIMIT 100
+2026-02-07 10:12:47,128 | ------------------------------------------------------------
+2026-02-07 10:13:43,477 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:13:43,477 | Step 3: 查找所有含ZSM的催化剂的完整反应网络（含反应物和生成物）
+2026-02-07 10:13:43,477 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:13:43,477 | ------------------------------------------------------------
+2026-02-07 10:14:18,328 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:14:18,328 | Step 1: 模糊搜索名称包含ZSM的 zeolite
+2026-02-07 10:14:18,328 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:14:18,328 | ------------------------------------------------------------
+2026-02-07 10:15:40,793 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:15:40,793 | Step 2: 查找催化剂 ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 10:15:40,793 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT z.name AS catalyst_name,
+       collect(DISTINCT site.name) AS active_sites,
+       collect(DISTINCT {property_category: c.name, property_value: prop.name}) AS properties
+LIMIT 100
+2026-02-07 10:15:40,793 | ------------------------------------------------------------
+2026-02-07 10:16:30,995 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:16:30,995 | Step 3: 查找催化剂 ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 10:16:30,995 |   Cypher 1: MATCH p1 = (z:zeolite {name: "ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 10:16:30,995 | ------------------------------------------------------------
+2026-02-07 10:17:05,557 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:17:05,557 | Step 4: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 10:17:05,558 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 10:17:05,558 | ------------------------------------------------------------
+2026-02-07 10:17:55,269 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:17:55,269 | Step 5: 查找催化剂 ZSM-5 Zeolite 的完整信息（含属性与活性位点）
+2026-02-07 10:17:55,269 |   Cypher 1: MATCH p1 = (z:zeolite {name: "ZSM-5 Zeolite"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 10:17:55,270 | ------------------------------------------------------------
+2026-02-07 10:18:45,973 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:18:45,973 | Step 6: 查找催化剂 ZSM-5 Zeolite 的完整反应网络（含反应物和生成物）
+2026-02-07 10:18:45,973 |   Cypher 1: MATCH p1 = (z:zeolite {name: "ZSM-5 Zeolite"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:18:45,973 | ------------------------------------------------------------
+2026-02-07 10:19:38,703 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:19:38,703 | Step 7: 查找催化剂 ZSM-5(TSH) 的完整信息（含属性与活性位点）
+2026-02-07 10:19:38,703 |   Cypher 1: MATCH p1 = (z:zeolite {name: "ZSM-5(TSH)"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 10:19:38,703 | ------------------------------------------------------------
+2026-02-07 10:20:45,339 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:20:45,339 | Step 1: 模糊搜索名称包含 ZSM 的 zeolite
+2026-02-07 10:20:45,339 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+WITH z LIMIT 20
+OPTIONAL MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT z) AS zeolites,
+       collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:20:45,339 | ------------------------------------------------------------
+2026-02-07 10:22:26,511 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:22:26,511 | Step 1: 模糊搜索名称包含ZSM的zeolite
+2026-02-07 10:22:26,511 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p1 = (z)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name,
+       collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:22:26,511 | ------------------------------------------------------------
+2026-02-07 10:23:12,696 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:23:12,696 | Step 1: 模糊搜索名称包含 ZSM 的 zeolite
+2026-02-07 10:23:12,696 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+RETURN z
+LIMIT 20
+2026-02-07 10:23:12,696 | ------------------------------------------------------------
+2026-02-07 10:23:59,768 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:23:59,768 | Step 2: 查找所有含ZSM的zeolite的完整信息（含属性与活性位点）
+2026-02-07 10:23:59,768 |   Cypher 1: MATCH (z:zeolite)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH activeSitePaths = (z)-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH propertyPaths = (z)-[:LINKS]->(cat:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN z.name AS zeolite_name, collect(DISTINCT activeSitePaths) AS active_site_info, collect(DISTINCT propertyPaths) AS property_info
+LIMIT 100
+2026-02-07 10:23:59,768 | ------------------------------------------------------------
+2026-02-07 10:24:51,566 | Query: 查询含有ZSM的催化剂的反应及完整信息
+2026-02-07 10:24:51,566 | Step 3: 查找所有含ZSM的zeolite的完整反应网络（含反应物和生成物）
+2026-02-07 10:24:51,566 |   Cypher 1: MATCH p1 = (z:zeolite)-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+WHERE toLower(z.name) CONTAINS toLower("ZSM")
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 10:24:51,567 | ------------------------------------------------------------
+2026-02-07 10:26:05,495 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:26:05,495 | Step 1: 模糊搜索名称包含CH3CH2OH的molecular；模糊搜索名称包含CO的molecular
+2026-02-07 10:26:05,495 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CH3CH2OH")
+RETURN m
+LIMIT 20
+2026-02-07 10:26:05,495 |   Cypher 2: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:26:05,495 | ------------------------------------------------------------
+2026-02-07 10:27:37,438 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:27:37,438 | Step 2: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 10:27:37,439 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS pathNodes
+WITH p, [node IN pathNodes WHERE node:reactionNode] AS reactionNodes
+UNWIND reactionNodes AS r
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+WITH p, r, collect(DISTINCT prop) AS reactionProps, collect(DISTINCT site) AS activeSites, collect(DISTINCT z) AS catalysts
+RETURN p, collect(DISTINCT {reactionName: r.name, properties: [p IN reactionProps | p.name], activeSites: [s IN activeSites | s.name], catalysts: [z IN catalysts | z.name]}) AS stepDetails
+LIMIT 100
+2026-02-07 10:27:37,439 | ------------------------------------------------------------
+2026-02-07 10:28:17,044 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:28:17,044 | Step 3: 模糊搜索名称包含CO的molecular
+2026-02-07 10:28:17,045 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:28:17,045 | ------------------------------------------------------------
+2026-02-07 10:29:33,535 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:29:33,535 | Step 4: 查找从CH3CH2OH到CO的反应路径（深度1..5，方向：正向）
+2026-02-07 10:29:33,535 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..5]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS pathNodes
+UNWIND pathNodes AS node
+WHERE node:reactionNode
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(node)
+OPTIONAL MATCH (product:molecular)<-[:LINKS]-(node)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+WITH p, node, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products, collect(DISTINCT site.name) AS activeSites, collect(DISTINCT z.name) AS catalysts, collect(DISTINCT prop.name) AS properties
+RETURN p, collect(DISTINCT {reaction: node.name, reactants: reactants, products: products, activeSites: activeSites, catalysts: catalysts, properties: properties}) AS stepDetails
+LIMIT 100
+2026-02-07 10:29:33,535 | ------------------------------------------------------------
+2026-02-07 10:30:05,731 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:30:05,731 | Step 5: 模糊搜索名称包含CO的molecular
+2026-02-07 10:30:05,731 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:30:05,731 | ------------------------------------------------------------
+2026-02-07 10:32:37,004 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:32:37,004 | Step 6: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 10:32:37,004 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+RETURN p
+LIMIT 100
+2026-02-07 10:32:37,004 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH nodes(p) AS pathNodes
+UNWIND pathNodes AS node
+MATCH (node:reactionNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(node)
+OPTIONAL MATCH (node)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT node.name AS reactionName, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products, collect(DISTINCT site.name) AS activeSites, collect(DISTINCT z.name) AS catalysts, collect(DISTINCT prop.name) AS reactionProperties
+LIMIT 100
+2026-02-07 10:32:37,004 | ------------------------------------------------------------
+2026-02-07 10:33:22,408 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:33:22,408 | Step 7: 模糊搜索名称包含CO的molecular
+2026-02-07 10:33:22,408 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:33:22,408 | ------------------------------------------------------------
+2026-02-07 10:34:20,360 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:34:20,360 | Step 1: 模糊搜索名称包含CH3CH2OH的molecular；模糊搜索名称包含CO的molecular
+2026-02-07 10:34:20,360 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CH3CH2OH")
+RETURN m
+LIMIT 20
+2026-02-07 10:34:20,360 |   Cypher 2: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:34:20,360 | ------------------------------------------------------------
+2026-02-07 10:35:58,033 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:35:58,033 | Step 2: 查找从分子CH3CH2OH到分子CO的反应路径（深度1..3，方向：正向）
+2026-02-07 10:35:58,033 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactionSteps
+UNWIND reactionSteps AS r
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+WITH p, 
+     collect(DISTINCT r) AS reactions,
+     collect(DISTINCT site) AS activeSites,
+     collect(DISTINCT z) AS catalysts,
+     collect(DISTINCT prop) AS reactionProperties
+RETURN p, reactions, activeSites, catalysts, reactionProperties
+LIMIT 100
+2026-02-07 10:35:58,033 | ------------------------------------------------------------
+2026-02-07 10:36:56,333 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:36:56,333 | Step 3: 模糊搜索名称包含CO的molecular
+2026-02-07 10:36:56,333 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:36:56,333 | ------------------------------------------------------------
+2026-02-07 10:38:15,133 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:38:15,133 | Step 4: 查找从分子CH3CH2OH到分子CO的反应路径（深度1..5，方向：正向）
+2026-02-07 10:38:15,133 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..5]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactionSteps
+UNWIND reactionSteps AS r
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+WITH p, r,
+     COLLECT(DISTINCT reactant.name) AS reactants,
+     COLLECT(DISTINCT product.name) AS products,
+     COLLECT(DISTINCT site.name) AS activeSites,
+     COLLECT(DISTINCT z.name) AS catalysts,
+     COLLECT(DISTINCT prop.name) AS reactionProperties
+WITH p, COLLECT(DISTINCT {
+    reactionName: r.name,
+    reactants: reactants,
+    products: products,
+    activeSites: activeSites,
+    catalysts: catalysts,
+    reactionProperties: reactionProperties
+}) AS stepDetails
+RETURN p AS reactionPath, stepDetails
+LIMIT 100
+2026-02-07 10:38:15,133 | ------------------------------------------------------------
+2026-02-07 10:39:00,276 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:39:00,276 | Step 5: 模糊搜索名称包含CO的molecular
+2026-02-07 10:39:00,276 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:39:00,276 | ------------------------------------------------------------
+2026-02-07 10:39:51,746 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:39:51,746 | Step 6: 查找从分子CH3CH2OH到分子CO的反应路径（深度1..5，方向：正向）
+2026-02-07 10:39:51,746 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..5]->(end:molecular {name: "CO"})
+RETURN p
+LIMIT 100
+2026-02-07 10:39:51,746 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..5]->(end:molecular {name: "CO"})
+UNWIND nodes(p) AS node
+WHERE node:reactionNode
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+RETURN DISTINCT node.name AS reaction_name, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT prop.name) AS reaction_properties, collect(DISTINCT z.name) AS catalysts
+LIMIT 100
+2026-02-07 10:39:51,746 | ------------------------------------------------------------
+2026-02-07 10:40:31,768 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:40:31,769 | Step 7: 模糊搜索名称包含CO的molecular
+2026-02-07 10:40:31,769 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 10:40:31,769 | ------------------------------------------------------------
+2026-02-07 10:42:05,516 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:42:05,516 | Step 1: 查找节点CH3CH2OH;查找节点CO
+2026-02-07 10:42:05,516 |   Cypher 1: MATCH (m1:molecular {name: "CH3CH2OH"}) RETURN m1 LIMIT 100
+2026-02-07 10:42:05,516 |   Cypher 2: MATCH (m2:molecular {name: "CO"}) RETURN m2 LIMIT 100
+2026-02-07 10:42:05,516 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS path_nodes
+UNWIND path_nodes AS node
+MATCH (node:reactionNode)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+RETURN p, collect(DISTINCT node) AS reaction_steps, collect(DISTINCT site) AS active_sites, collect(DISTINCT z) AS catalysts, collect(DISTINCT prop) AS reaction_properties
+LIMIT 100
+2026-02-07 10:42:05,516 | ------------------------------------------------------------
+2026-02-07 10:42:50,153 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:42:50,153 | Step 2: 查找CH3CH2OH的直接邻居;查找CO的直接邻居
+2026-02-07 10:42:50,153 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 10:42:50,153 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(m:molecular {name: "CH3CH2OH"}) RETURN p2 LIMIT 50
+2026-02-07 10:42:50,153 |   Cypher 3: MATCH p3 = (m:molecular {name: "CO"})-[:LINKS]->(neighbor) RETURN p3 LIMIT 50
+2026-02-07 10:42:50,153 |   Cypher 4: MATCH p4 = (neighbor)-[:LINKS]->(m:molecular {name: "CO"}) RETURN p4 LIMIT 50
+2026-02-07 10:42:50,153 | ------------------------------------------------------------
+2026-02-07 10:43:42,021 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:43:42,021 | Step 3: 查找分子CH3CH2OH作为反应物参与的反应及完整信息
+2026-02-07 10:43:42,021 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:43:42,022 | ------------------------------------------------------------
+2026-02-07 10:44:26,536 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:44:26,536 | Step 4: 查找分子CH3CHO作为反应物参与的反应及完整信息;查找分子H2(g)作为反应物参与的反应及完整信息
+2026-02-07 10:44:26,536 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:44:26,536 |   Cypher 2: MATCH p1 = (m:molecular {name: "H2(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:44:26,536 | ------------------------------------------------------------
+2026-02-07 10:46:01,504 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:46:01,504 | Step 5: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 10:46:01,505 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS pathNodes
+WITH p, [n IN pathNodes WHERE labels(n) CONTAINS 'reactionNode'] AS reactionList
+UNWIND reactionList AS r
+OPTIONAL MATCH siteRel = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH catRel = (cat:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH propRel = (r)-[:LINKS]->(prop:propertyNode)
+WITH p, 
+     collect(DISTINCT r) AS reactions,
+     collect(DISTINCT siteRel) AS activeSiteLinks,
+     collect(DISTINCT catRel) AS catalystLinks,
+     collect(DISTINCT propRel) AS propertyLinks
+RETURN p, reactions, activeSiteLinks, catalystLinks, propertyLinks
+LIMIT 100
+2026-02-07 10:46:01,505 | ------------------------------------------------------------
+2026-02-07 10:46:50,620 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:46:50,620 | Step 6: 溯源查找生成CO的反应及完整信息
+2026-02-07 10:46:50,620 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "CO"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH p5 = (r)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths,
+       collect(DISTINCT p5) AS reaction_property_paths
+LIMIT 100
+2026-02-07 10:46:50,621 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..5]->(end:molecular {name: "CO"})
+RETURN p
+LIMIT 100
+2026-02-07 10:46:50,621 | ------------------------------------------------------------
+2026-02-07 10:47:46,466 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:47:46,466 | Step 7: 查找分子CH3CHO作为反应物参与的反应及完整信息
+2026-02-07 10:47:46,466 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:47:46,466 | ------------------------------------------------------------
+2026-02-07 10:49:00,699 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:49:00,699 | Step 1: 查找节点 CH3CH2OH; 查找节点 CO
+2026-02-07 10:49:00,699 |   Cypher 1: MATCH (m1:molecular {name: "CH3CH2OH"}) RETURN m1 LIMIT 100
+2026-02-07 10:49:00,699 |   Cypher 2: MATCH (m2:molecular {name: "CO"}) RETURN m2 LIMIT 100
+2026-02-07 10:49:00,700 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+UNWIND nodes(p) AS node
+OPTIONAL MATCH (r:reactionNode) WHERE id(node) = id(r)
+OPTIONAL MATCH (react:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(prod:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT p,
+       collect(DISTINCT react) AS reaction_reactants,
+       collect(DISTINCT prod) AS reaction_products,
+       collect(DISTINCT site) AS active_sites,
+       collect(DISTINCT z) AS catalysts,
+       collect(DISTINCT prop) AS reaction_properties
+LIMIT 100
+2026-02-07 10:49:00,700 | ------------------------------------------------------------
+2026-02-07 10:49:55,590 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:49:55,590 | Step 2: 查找CH3CH2OH的直接邻居；查找CO的直接邻居
+2026-02-07 10:49:55,590 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 10:49:55,590 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(m:molecular {name: "CH3CH2OH"}) RETURN p2 LIMIT 50
+2026-02-07 10:49:55,591 |   Cypher 3: MATCH p3 = (m:molecular {name: "CO"})-[:LINKS]->(neighbor) RETURN p3 LIMIT 50
+2026-02-07 10:49:55,591 |   Cypher 4: MATCH p4 = (neighbor)-[:LINKS]->(m:molecular {name: "CO"}) RETURN p4 LIMIT 50
+2026-02-07 10:49:55,591 | ------------------------------------------------------------
+2026-02-07 10:50:50,114 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:50:50,114 | Step 3: 查找分子 CH3CH2OH 作为反应物参与的反应及完整信息
+2026-02-07 10:50:50,114 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:50:50,114 | ------------------------------------------------------------
+2026-02-07 10:51:26,816 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:51:26,816 | Step 4: 查找分子 CH3CHO 作为反应物参与的反应及完整信息
+2026-02-07 10:51:26,816 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:51:26,816 | ------------------------------------------------------------
+2026-02-07 10:53:29,456 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:53:29,456 | Step 5: 查找从 CH3CH2OH 到 CO 的反应路径（深度 1..3，方向：正向）
+2026-02-07 10:53:29,456 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE 'reactionNode' IN labels(n)] AS reaction_steps
+UNWIND reaction_steps AS step
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(step)
+OPTIONAL MATCH (step)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(step)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (step)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT p AS reaction_path,
+       collect(DISTINCT {
+           reaction: step.name,
+           reactants: collect(DISTINCT reactant.name),
+           products: collect(DISTINCT product.name),
+           active_sites: collect(DISTINCT site.name),
+           catalysts: collect(DISTINCT z.name),
+           properties: collect(DISTINCT prop.name)
+       }) AS step_details
+LIMIT 100
+2026-02-07 10:53:29,456 | ------------------------------------------------------------
+2026-02-07 10:54:06,707 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:54:06,707 | Step 6: 查找分子 CH3CH2OH 作为反应物参与的反应及完整信息
+2026-02-07 10:54:06,707 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:54:06,708 | ------------------------------------------------------------
+2026-02-07 10:54:53,790 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:54:53,790 | Step 7: 查找分子 CH3CHO 作为反应物参与的反应及完整信息
+2026-02-07 10:54:53,791 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:54:53,791 | ------------------------------------------------------------
+2026-02-07 10:56:01,070 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:56:01,070 | Step 1: 查找节点 CH3CH2OH；查找节点 CO
+2026-02-07 10:56:01,070 |   Cypher 1: MATCH (m1:molecular {name: "CH3CH2OH"}) RETURN m1 LIMIT 100
+2026-02-07 10:56:01,070 |   Cypher 2: MATCH (m2:molecular {name: "CO"}) RETURN m2 LIMIT 100
+2026-02-07 10:56:01,070 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+UNWIND [n IN nodes(p) WHERE n:reactionNode] AS r
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN p AS reaction_path,
+       collect(DISTINCT r) AS reaction_nodes,
+       collect(DISTINCT site) AS active_sites,
+       collect(DISTINCT z) AS catalysts,
+       collect(DISTINCT prop) AS reaction_properties
+LIMIT 100
+2026-02-07 10:56:01,070 | ------------------------------------------------------------
+2026-02-07 10:56:39,682 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:56:39,682 | Step 2: 查找分子 CH3CH2OH 作为反应物参与的反应及完整信息
+2026-02-07 10:56:39,682 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:56:39,682 | ------------------------------------------------------------
+2026-02-07 10:57:21,338 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:57:21,338 | Step 3: 查找分子 CH3CHO 作为反应物参与的反应及完整信息
+2026-02-07 10:57:21,338 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 10:57:21,338 | ------------------------------------------------------------
+2026-02-07 10:59:15,598 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 10:59:15,598 | Step 4: 查找从 CH3CH2OH 到 CO 的反应路径（深度 1..3，方向：正向）
+2026-02-07 10:59:15,598 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+RETURN p
+LIMIT 100
+2026-02-07 10:59:15,598 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+UNWIND nodes(p) AS node
+WHERE node:reactionNode
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(node)
+OPTIONAL MATCH (node)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+RETURN node.name AS reaction_id, collect(DISTINCT reactant.name) AS reactants, collect(DISTINCT product.name) AS products, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT z.name) AS catalysts, collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 10:59:15,598 | ------------------------------------------------------------
+2026-02-07 11:00:17,051 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:00:17,052 | Step 5: 查找分子 CH3CH2OH 作为反应物参与的反应及完整信息
+2026-02-07 11:00:17,052 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:00:17,052 | ------------------------------------------------------------
+2026-02-07 11:00:51,102 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:00:51,103 | Step 6: 查找分子 CH3CHO 作为反应物参与的反应及完整信息
+2026-02-07 11:00:51,103 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:00:51,103 | ------------------------------------------------------------
+2026-02-07 11:02:46,889 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:02:46,889 | Step 7: 查找从 CH3CH2OH 到 CO 的反应路径（深度 1..3，方向：正向）
+2026-02-07 11:02:46,889 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+WHERE all(i in range(0, length(p)-1) where 
+  (nodes(p)[i]:molecular AND nodes(p)[i+1]:reactionNode) OR 
+  (nodes(p)[i]:reactionNode AND nodes(p)[i+1]:molecular)
+)
+WITH p, [n in nodes(p) WHERE n:reactionNode] AS reactions
+UNWIND reactions AS r
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN p, collect(DISTINCT r) AS reactionNodes, collect(DISTINCT site) AS activeSites, collect(DISTINCT z) AS catalysts, collect(DISTINCT prop) AS reactionProperties
+LIMIT 100
+2026-02-07 11:02:46,889 | ------------------------------------------------------------
+2026-02-07 11:04:47,525 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:04:47,525 | Step 1: 查找节点CH3CH2OH；查找节点CO
+2026-02-07 11:04:47,525 |   Cypher 1: MATCH (m1:molecular {name: "CH3CH2OH"}) RETURN m1 LIMIT 100
+2026-02-07 11:04:47,525 |   Cypher 2: MATCH (m2:molecular {name: "CO"}) RETURN m2 LIMIT 100
+2026-02-07 11:04:47,525 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS pathNodes
+UNWIND pathNodes AS node
+OPTIONAL MATCH (r:reactionNode) WHERE node = r
+OPTIONAL MATCH (react:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (prod:molecular)<-[:LINKS]-(r)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT p,
+       collect(DISTINCT react) AS all_reactants,
+       collect(DISTINCT prod) AS all_products,
+       collect(DISTINCT site) AS active_sites,
+       collect(DISTINCT z) AS catalysts,
+       collect(DISTINCT prop) AS reaction_properties
+LIMIT 100
+2026-02-07 11:04:47,525 | ------------------------------------------------------------
+2026-02-07 11:05:28,102 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:05:28,102 | Step 2: 查找CH3CH2OH的直接邻居
+2026-02-07 11:05:28,102 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 11:05:28,102 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(m:molecular {name: "CH3CH2OH"}) RETURN p2 LIMIT 50
+2026-02-07 11:05:28,103 | ------------------------------------------------------------
+2026-02-07 11:06:38,883 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:06:38,883 | Step 3: 对反应节点R1[18]查找其完整信息（含反应物、生成物、活性位点、催化剂及属性）
+2026-02-07 11:06:38,883 |   Cypher 1: MATCH (r:reactionNode {name: "R1[18]"})
+OPTIONAL MATCH reactant_paths = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH product_paths = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH activeSite_paths = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH zeolite_catalyst_paths = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH heterogeneous_catalyst_paths = (hc:heterogeneousCatalyst)-[:LINKS]->(site)
+OPTIONAL MATCH homogeneous_catalyst_paths = (hc:homogeneousCatalyst)-[:LINKS]->(site)
+OPTIONAL MATCH reaction_property_paths = (r)-[:LINKS]->(prop:propertyNode)
+RETURN 
+  collect(DISTINCT reactant_paths) AS reactant_paths,
+  collect(DISTINCT product_paths) AS product_paths,
+  collect(DISTINCT activeSite_paths) AS active_site_paths,
+  collect(DISTINCT zeolite_catalyst_paths) AS zeolite_catalyst_paths,
+  collect(DISTINCT heterogeneous_catalyst_paths) AS heterogeneous_catalyst_paths,
+  collect(DISTINCT homogeneous_catalyst_paths) AS homogeneous_catalyst_paths,
+  collect(DISTINCT reaction_property_paths) AS reaction_property_paths
+LIMIT 100
+2026-02-07 11:06:38,883 | ------------------------------------------------------------
+2026-02-07 11:07:17,723 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:07:17,723 | Step 4: 查找分子CH3CHO作为反应物参与的反应及完整信息
+2026-02-07 11:07:17,723 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:07:17,724 | ------------------------------------------------------------
+2026-02-07 11:09:01,643 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:09:01,644 | Step 5: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:09:01,644 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+RETURN p
+LIMIT 100
+2026-02-07 11:09:01,644 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+UNWIND nodes(p) AS node
+WHERE node:reactionNode
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(node)
+OPTIONAL MATCH (node)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT node.name AS reaction_name,
+       collect(DISTINCT reactant.name) AS reactants,
+       collect(DISTINCT product.name) AS products,
+       collect(DISTINCT site.name) AS active_sites,
+       collect(DISTINCT z.name) AS catalysts,
+       collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 11:09:01,644 | ------------------------------------------------------------
+2026-02-07 11:10:38,512 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:10:38,512 | Step 6: 查找反应节点R1[18]、R3[18]、R2[18]、R7[13]、R5[18]的完整信息（含反应物、生成物、活性位点、催化剂及属性）
+2026-02-07 11:10:38,512 |   Cypher 1: MATCH (r:reactionNode) 
+WHERE r.name IN ["R1[18]", "R3[18]", "R2[18]", "R7[13]", "R5[18]"]
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (cat:heterogeneousCatalyst|homogeneousCatalyst|zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH (cat)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(catProp:propertyNode)
+RETURN 
+  r AS reaction,
+  COLLECT(DISTINCT reactant) AS reactants,
+  COLLECT(DISTINCT product) AS products,
+  COLLECT(DISTINCT site) AS active_sites,
+  COLLECT(DISTINCT cat) AS catalysts,
+  COLLECT(DISTINCT prop) AS reaction_properties,
+  COLLECT(DISTINCT {category: c, property: catProp}) AS catalyst_properties
+LIMIT 100
+2026-02-07 11:10:38,512 | ------------------------------------------------------------
+2026-02-07 11:11:35,229 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:11:35,229 | Step 7: 查找反应节点R1[18]、R3[18]、R2[18]、R7[13]、R5[18]的完整信息（含反应物、生成物、活性位点、催化剂及属性）
+2026-02-07 11:11:35,229 |   Cypher 1: MATCH (r:reactionNode)
+WHERE r.name IN ["R1[18]", "R3[18]", "R2[18]", "R7[13]", "R5[18]"]
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (cat)-[:LINKS]->(site) WHERE cat:zeolite OR cat:heterogeneousCatalyst OR cat:homogeneousCatalyst
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN r.name AS reaction_name,
+       collect(DISTINCT reactant.name) AS reactants,
+       collect(DISTINCT product.name) AS products,
+       collect(DISTINCT site.name) AS active_sites,
+       collect(DISTINCT cat.name) AS catalysts,
+       collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 11:11:35,229 | ------------------------------------------------------------
+2026-02-07 11:14:16,406 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:14:16,406 | Step 1: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:14:16,406 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+WHERE length(p) % 2 = 0 AND all(i IN range(0, length(p)) | 
+  (i % 2 = 0 AND nodes(p)[i]:molecular) OR 
+  (i % 2 = 1 AND nodes(p)[i]:reactionNode)
+)
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactions
+UNWIND reactions AS r
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (product:molecular)<-[:LINKS]-(r)
+RETURN p,
+       collect(DISTINCT {
+         reaction_id: r.name,
+         active_sites: collect(DISTINCT site.name),
+         catalysts: collect(DISTINCT z.name),
+         reaction_properties: collect(DISTINCT prop.name),
+         reactants: collect(DISTINCT reactant.name),
+         products: collect(DISTINCT product.name)
+       }) AS reaction_details
+LIMIT 100
+2026-02-07 11:14:16,406 | ------------------------------------------------------------
+2026-02-07 11:14:54,585 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:14:54,585 | Step 2: 模糊搜索名称包含CH3CH2OH的molecular；模糊搜索名称包含CO的molecular
+2026-02-07 11:14:54,585 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CH3CH2OH")
+RETURN m
+LIMIT 20
+2026-02-07 11:14:54,585 |   Cypher 2: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 11:14:54,585 | ------------------------------------------------------------
+2026-02-07 11:15:55,410 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:15:55,410 | Step 3: 查找节点 CO
+2026-02-07 11:15:55,410 |   Cypher 1: MATCH (n:molecular {name: "CO"})
+RETURN n
+LIMIT 100
+2026-02-07 11:15:55,411 | ------------------------------------------------------------
+2026-02-07 11:17:29,861 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:17:29,861 | Step 4: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:17:29,861 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+WHERE 
+  length(p) % 2 = 0
+  AND all(i in range(0, length(nodes(p)) - 1) WHERE 
+    (i % 2 = 0 AND nodes(p)[i]:molecular) 
+    AND (i % 2 = 1 AND nodes(p)[i]:reactionNode)
+  )
+RETURN p
+LIMIT 100
+2026-02-07 11:17:29,861 |   Cypher 2: MATCH (r:reactionNode)
+WHERE exists((:molecular {name: "CH3CH2OH"})-[:LINKS*..6]->(r) AND (r)-[:LINKS*..5]->(:molecular {name: "CO"}))
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN r.name AS reaction_name, collect(DISTINCT site.name) AS active_sites, collect(DISTINCT z.name) AS catalysts, collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 11:17:29,861 | ------------------------------------------------------------
+2026-02-07 11:18:03,669 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:18:03,669 | Step 5: 查找节点 CO
+2026-02-07 11:18:03,669 |   Cypher 1: MATCH (n:molecular {name: "CO"})
+RETURN n
+LIMIT 100
+2026-02-07 11:18:03,669 | ------------------------------------------------------------
+2026-02-07 11:19:57,934 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:19:57,934 | Step 6: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:19:57,934 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*2..6]->(end:molecular {name: "CO"})
+WHERE size([n IN nodes(p) WHERE n:reactionNode]) BETWEEN 1 AND 3
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reaction_nodes
+UNWIND reaction_nodes AS r
+OPTIONAL MATCH (other_reactant:molecular)-[:LINKS]->(r) WHERE other_reactant NOT IN nodes(p)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+WITH p, reaction_nodes,
+     collect(DISTINCT other_reactant) AS additional_reactants,
+     collect(DISTINCT site) AS active_sites,
+     collect(DISTINCT z) AS catalysts,
+     collect(DISTINCT prop) AS reaction_properties
+RETURN p, reaction_nodes, additional_reactants, active_sites, catalysts, reaction_properties
+LIMIT 100
+2026-02-07 11:19:57,934 | ------------------------------------------------------------
+2026-02-07 11:20:28,668 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:20:28,668 | Step 7: 查找节点 CO
+2026-02-07 11:20:28,668 |   Cypher 1: MATCH (n:molecular {name: "CO"})
+RETURN n
+LIMIT 100
+2026-02-07 11:20:28,668 | ------------------------------------------------------------
+2026-02-07 11:22:23,767 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:22:23,767 | Step 1: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:22:23,767 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reaction_list
+UNWIND reaction_list AS r
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN p, collect(DISTINCT r) AS reactions, collect(DISTINCT site) AS active_sites, collect(DISTINCT z) AS catalysts, collect(DISTINCT prop) AS reaction_properties
+LIMIT 100
+2026-02-07 11:22:23,767 | ------------------------------------------------------------
+2026-02-07 11:22:52,940 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:22:52,940 | Step 2: 模糊搜索名称包含CH3CH2OH的molecular
+2026-02-07 11:22:52,940 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CH3CH2OH")
+RETURN m
+LIMIT 20
+2026-02-07 11:22:52,940 | ------------------------------------------------------------
+2026-02-07 11:23:17,480 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:23:17,480 | Step 3: 模糊搜索名称包含CO的molecular
+2026-02-07 11:23:17,480 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 11:23:17,480 | ------------------------------------------------------------
+2026-02-07 11:24:09,399 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:24:09,399 | Step 4: 查找从CH3CH2OH对应的分子到CO对应的分子的反应路径（深度1..3，方向：正向）
+2026-02-07 11:24:09,399 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactionNodes
+UNWIND reactionNodes AS r
+OPTIONAL MATCH activeSitePath = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH catalystPath = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH reactionPropPath = (r)-[:LINKS]->(prop:propertyNode)
+WITH p, collect(DISTINCT activeSitePath) AS activeSitePaths, collect(DISTINCT catalystPath) AS catalystPaths, collect(DISTINCT reactionPropPath) AS reactionPropertyPaths
+RETURN p, activeSitePaths, catalystPaths, reactionPropertyPaths
+LIMIT 100
+2026-02-07 11:24:09,399 | ------------------------------------------------------------
+2026-02-07 11:24:45,476 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:24:45,476 | Step 5: 模糊搜索名称包含CO的molecular
+2026-02-07 11:24:45,476 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("CO")
+RETURN m
+LIMIT 20
+2026-02-07 11:24:45,476 | ------------------------------------------------------------
+2026-02-07 11:25:25,166 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:25:25,166 | Step 6: 查找节点CH3CH2OH
+2026-02-07 11:25:25,166 |   Cypher 1: MATCH (n:molecular {name: "CH3CH2OH"})
+RETURN n
+LIMIT 100
+2026-02-07 11:25:25,166 | ------------------------------------------------------------
+2026-02-07 11:25:42,601 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:25:42,601 | Step 7: 查找节点CO
+2026-02-07 11:25:42,601 |   Cypher 1: MATCH (n:molecular {name: "CO"})
+RETURN n
+LIMIT 100
+2026-02-07 11:25:42,601 | ------------------------------------------------------------
+2026-02-07 11:27:39,599 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:27:39,599 | Step 1: 查找节点CH3CH2OH; 查找节点CO
+2026-02-07 11:27:39,599 |   Cypher 1: MATCH (m1:molecular {name: "CH3CH2OH"}) RETURN m1 LIMIT 100
+2026-02-07 11:27:39,599 |   Cypher 2: MATCH (m2:molecular {name: "CO"}) RETURN m2 LIMIT 100
+2026-02-07 11:27:39,599 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactions
+UNWIND reactions AS r
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+RETURN p, collect(DISTINCT r) AS reaction_nodes, collect(DISTINCT prop) AS reaction_properties, collect(DISTINCT site) AS active_sites, collect(DISTINCT z) AS catalysts
+LIMIT 100
+2026-02-07 11:27:39,599 | ------------------------------------------------------------
+2026-02-07 11:28:13,637 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:28:13,637 | Step 2: 查找CH3CH2OH的直接邻居
+2026-02-07 11:28:13,637 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 11:28:13,637 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(m:molecular {name: "CH3CH2OH"}) RETURN p2 LIMIT 50
+2026-02-07 11:28:13,638 | ------------------------------------------------------------
+2026-02-07 11:29:07,441 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:29:07,441 | Step 3: 查找分子CH3CH2OH作为反应物参与的反应及完整信息
+2026-02-07 11:29:07,441 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:29:07,441 | ------------------------------------------------------------
+2026-02-07 11:29:57,208 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:29:57,208 | Step 4: 查找分子CH3CHO作为反应物参与的反应及完整信息; 查找分子H2(g)作为反应物参与的反应及完整信息
+2026-02-07 11:29:57,208 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:29:57,208 |   Cypher 2: MATCH p1 = (m:molecular {name: "H2(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:29:57,208 | ------------------------------------------------------------
+2026-02-07 11:31:17,703 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:31:17,704 | Step 5: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:31:17,704 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+RETURN p AS reaction_path
+LIMIT 100
+2026-02-07 11:31:17,704 |   Cypher 2: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+UNWIND nodes(p) AS node
+MATCH (node:reactionNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(node)
+OPTIONAL MATCH (node)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(node)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (node)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT node.name AS reaction_id,
+       collect(DISTINCT reactant.name) AS reactants,
+       collect(DISTINCT product.name) AS products,
+       collect(DISTINCT site.name) AS active_sites,
+       collect(DISTINCT z.name) AS catalysts,
+       collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 11:31:17,704 | ------------------------------------------------------------
+2026-02-07 11:32:22,389 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:32:22,389 | Step 6: 查找分子CH3CH2OH的直接邻居
+2026-02-07 11:32:22,389 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(neighbor) RETURN p1 LIMIT 50
+2026-02-07 11:32:22,389 |   Cypher 2: MATCH p2 = (neighbor)-[:LINKS]->(m:molecular {name: "CH3CH2OH"}) RETURN p2 LIMIT 50
+2026-02-07 11:32:22,389 | ------------------------------------------------------------
+2026-02-07 11:33:05,944 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:33:05,944 | Step 7: 查找分子CH3CH2OH作为反应物参与的反应及完整信息
+2026-02-07 11:33:05,944 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:33:05,944 | ------------------------------------------------------------
+2026-02-07 11:35:08,890 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:35:08,890 | Step 1: 查找节点CH3CH2OH; 查找节点CO
+2026-02-07 11:35:08,890 |   Cypher 1: MATCH (start:molecular {name: "CH3CH2OH"}) RETURN start LIMIT 100
+2026-02-07 11:35:08,891 |   Cypher 2: MATCH (end:molecular {name: "CO"}) RETURN end LIMIT 100
+2026-02-07 11:35:08,891 |   Cypher 3: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE n:reactionNode] AS reactions
+UNWIND reactions AS r
+OPTIONAL MATCH (r)-[:LINKS]->(prod:molecular)
+OPTIONAL MATCH (react:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (r)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT p AS reaction_path,
+       r AS reaction_node,
+       collect(DISTINCT react) AS reactants,
+       collect(DISTINCT prod) AS products,
+       collect(DISTINCT site) AS active_sites,
+       collect(DISTINCT z) AS catalysts,
+       collect(DISTINCT prop) AS reaction_properties
+ORDER BY r.name
+LIMIT 100
+2026-02-07 11:35:08,891 | ------------------------------------------------------------
+2026-02-07 11:36:02,039 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:36:02,039 | Step 2: 查找分子CH3CH2OH作为反应物参与的反应及完整信息
+2026-02-07 11:36:02,039 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:36:02,039 | ------------------------------------------------------------
+2026-02-07 11:37:06,149 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:37:06,149 | Step 3: 查找分子CH3CHO作为反应物参与的反应及完整信息; 查找分子H2(g)作为反应物参与的反应及完整信息
+2026-02-07 11:37:06,149 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:37:06,149 |   Cypher 2: MATCH p1 = (m:molecular {name: "H2(g)"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:37:06,149 | ------------------------------------------------------------
+2026-02-07 11:39:00,512 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:39:00,512 | Step 4: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:39:00,512 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, [n IN nodes(p) WHERE labels(n) CONTAINS 'reactionNode'] AS reaction_nodes
+UNWIND reaction_nodes AS r
+OPTIONAL MATCH prop_path = (r)-[:LINKS]->(prop:propertyNode)
+OPTIONAL MATCH site_path = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH zeo_path = (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH hetero_cat_path = (heteroCat:heterogeneousCatalyst)-[:LINKS]->(site)
+OPTIONAL MATCH homo_cat_path = (homoCat:homogeneousCatalyst)-[:LINKS]->(r)
+RETURN DISTINCT p AS reaction_path,
+       collect(DISTINCT prop_path) AS reaction_property_paths,
+       collect(DISTINCT site_path) AS active_site_paths,
+       collect(DISTINCT zeo_path) AS zeolite_catalyst_paths,
+       collect(DISTINCT hetero_cat_path) AS heterogeneous_catalyst_paths,
+       collect(DISTINCT homo_cat_path) AS homogeneous_catalyst_paths
+LIMIT 100
+2026-02-07 11:39:00,512 | ------------------------------------------------------------
+2026-02-07 11:39:46,095 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:39:46,095 | Step 5: 查找分子CH3CH2OH作为反应物参与的反应及完整信息
+2026-02-07 11:39:46,095 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CH2OH"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:39:46,095 | ------------------------------------------------------------
+2026-02-07 11:40:35,888 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:40:35,888 | Step 6: 查找分子CH3CHO作为反应物参与的反应及完整信息
+2026-02-07 11:40:35,888 |   Cypher 1: MATCH p1 = (m:molecular {name: "CH3CHO"})-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p3 = (other:molecular)-[:LINKS]->(r) WHERE other <> m
+OPTIONAL MATCH p4 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p5 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reactant_reaction_paths,
+       collect(DISTINCT p2) AS product_paths,
+       collect(DISTINCT p3) AS other_reactant_paths,
+       collect(DISTINCT p4) AS activeSite_paths,
+       collect(DISTINCT p5) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:40:35,888 | ------------------------------------------------------------
+2026-02-07 11:42:42,137 | Query: 查询从CH3CH2OH到CO的反应路径和每一步反应的详细信息
+2026-02-07 11:42:42,138 | Step 7: 查找从CH3CH2OH到CO的反应路径（深度1..3，方向：正向）
+2026-02-07 11:42:42,138 |   Cypher 1: MATCH p = (start:molecular {name: "CH3CH2OH"})-[:LINKS*1..3]->(end:molecular {name: "CO"})
+WITH p, nodes(p) AS path_nodes
+UNWIND path_nodes AS n
+MATCH (n:reactionNode)
+OPTIONAL MATCH (reactant:molecular)-[:LINKS]->(n)
+OPTIONAL MATCH (n)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH (site:activeSite)-[:LINKS]->(n)
+OPTIONAL MATCH (z:zeolite)-[:LINKS]->(site)
+OPTIONAL MATCH (n)-[:LINKS]->(prop:propertyNode)
+RETURN DISTINCT p AS reaction_path,
+       n.name AS reaction_id,
+       collect(DISTINCT reactant.name) AS reactants,
+       collect(DISTINCT product.name) AS products,
+       collect(DISTINCT site.name) AS active_sites,
+       collect(DISTINCT z.name) AS catalysts,
+       collect(DISTINCT prop.name) AS reaction_properties
+LIMIT 100
+2026-02-07 11:42:42,138 | ------------------------------------------------------------
+2026-02-07 11:43:36,493 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:43:36,493 | Step 1: 模糊搜索名称包含 C2H4 的 molecular
+2026-02-07 11:43:36,493 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C2H4")
+RETURN m
+LIMIT 20
+2026-02-07 11:43:36,493 | ------------------------------------------------------------
+2026-02-07 11:44:07,995 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:44:07,995 | Step 2: 溯源查找生成 分子 C2H4(g) 的反应及完整信息
+2026-02-07 11:44:07,996 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:44:07,996 | ------------------------------------------------------------
+2026-02-07 11:44:45,999 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:44:45,999 | Step 1: 模糊搜索名称包含 C2H4(g) 的 molecular
+2026-02-07 11:44:46,000 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C2H4(g)")
+RETURN m
+LIMIT 20
+2026-02-07 11:44:46,000 | ------------------------------------------------------------
+2026-02-07 11:45:08,500 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:45:08,500 | Step 2: 溯源查找生成 分子 C2H4(g) 的反应及完整信息
+2026-02-07 11:45:08,501 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:45:08,501 | ------------------------------------------------------------
+2026-02-07 11:46:02,226 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:46:02,226 | Step 1: 模糊搜索名称包含C2H4(g)的molecular
+2026-02-07 11:46:02,226 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C2H4(g)")
+RETURN m
+LIMIT 20
+2026-02-07 11:46:02,226 | ------------------------------------------------------------
+2026-02-07 11:46:28,901 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:46:28,901 | Step 2: 溯源查找生成分子C2H4(g)的反应及完整信息
+2026-02-07 11:46:28,901 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:46:28,901 | ------------------------------------------------------------
+2026-02-07 11:47:11,023 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:47:11,023 | Step 1: 模糊搜索名称包含C2H4(g)的 molecular
+2026-02-07 11:47:11,023 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C2H4(g)")
+RETURN m
+LIMIT 20
+2026-02-07 11:47:11,023 | ------------------------------------------------------------
+2026-02-07 11:47:40,210 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:47:40,210 | Step 2: 溯源查找生成 C2H4(g) 的反应及完整信息
+2026-02-07 11:47:40,210 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:47:40,210 | ------------------------------------------------------------
+2026-02-07 11:48:17,244 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:48:17,245 | Step 1: 模糊搜索名称包含C2H4(g)的molecular
+2026-02-07 11:48:17,245 |   Cypher 1: MATCH (m:molecular)
+WHERE toLower(m.name) CONTAINS toLower("C2H4(g)")
+RETURN m
+LIMIT 20
+2026-02-07 11:48:17,245 | ------------------------------------------------------------
+2026-02-07 11:48:44,246 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:48:44,246 | Step 2: 溯源查找生成C2H4(g)的反应及完整信息
+2026-02-07 11:48:44,246 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:48:44,246 | ------------------------------------------------------------
+2026-02-07 11:49:46,779 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:49:46,779 | Step 1: 查找节点 C2H4(g)
+2026-02-07 11:49:46,779 |   Cypher 1: MATCH (n:molecular {name: "C2H4(g)"})
+RETURN n
+LIMIT 100
+2026-02-07 11:49:46,779 | ------------------------------------------------------------
+2026-02-07 11:50:13,966 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:50:13,966 | Step 2: 溯源查找生成 C2H4(g) 的反应及完整信息
+2026-02-07 11:50:13,966 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:50:13,966 | ------------------------------------------------------------
+2026-02-07 11:51:16,519 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:51:16,519 | Step 1: 查找节点 C2H4(g)
+2026-02-07 11:51:16,519 |   Cypher 1: MATCH (m:molecular {name: "C2H4(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 11:51:16,519 | ------------------------------------------------------------
+2026-02-07 11:51:52,897 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:51:52,897 | Step 2: 溯源查找生成 C2H4(g) 的反应及完整信息
+2026-02-07 11:51:52,898 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:51:52,898 | ------------------------------------------------------------
+2026-02-07 11:52:36,310 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:52:36,310 | Step 1: 查找节点 C2H4(g)
+2026-02-07 11:52:36,310 |   Cypher 1: MATCH (m:molecular {name: "C2H4(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 11:52:36,310 | ------------------------------------------------------------
+2026-02-07 11:53:01,370 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:53:01,370 | Step 2: 溯源查找生成 C2H4(g) 的反应及完整信息
+2026-02-07 11:53:01,370 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:53:01,370 | ------------------------------------------------------------
+2026-02-07 11:54:17,460 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:54:17,460 | Step 1: 查找节点C2H4(g)
+2026-02-07 11:54:17,460 |   Cypher 1: MATCH (m:molecular {name: "C2H4(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 11:54:17,460 | ------------------------------------------------------------
+2026-02-07 11:54:45,882 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:54:45,882 | Step 2: 溯源查找生成C2H4(g)的反应及完整信息
+2026-02-07 11:54:45,882 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:54:45,882 | ------------------------------------------------------------
+2026-02-07 11:55:31,501 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:55:31,501 | Step 3: 溯源查找生成Methanol的反应及完整信息
+2026-02-07 11:55:31,501 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "Methanol"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:55:31,501 | ------------------------------------------------------------
+2026-02-07 11:56:03,646 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:56:03,646 | Step 4: 溯源查找生成C2H4(g)的反应及完整信息
+2026-02-07 11:56:03,646 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:56:03,646 | ------------------------------------------------------------
+2026-02-07 11:56:58,551 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:56:58,551 | Step 1: 查找节点C2H4(g)
+2026-02-07 11:56:58,551 |   Cypher 1: MATCH (m:molecular {name: "C2H4(g)"})
+RETURN m
+LIMIT 100
+2026-02-07 11:56:58,551 | ------------------------------------------------------------
+2026-02-07 11:57:26,180 | Query: 溯源生成C2H4(g)的反应及完整信息
+2026-02-07 11:57:26,180 | Step 2: 溯源查找生成C2H4(g)的反应及完整信息
+2026-02-07 11:57:26,180 |   Cypher 1: MATCH p1 = (r:reactionNode)-[:LINKS]->(m:molecular {name: "C2H4(g)"})
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (site:activeSite)-[:LINKS]->(r)
+OPTIONAL MATCH p4 = (z:zeolite)-[:LINKS]->(site)
+RETURN collect(DISTINCT p1) AS reaction_product_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS activeSite_paths,
+       collect(DISTINCT p4) AS catalyst_paths
+LIMIT 100
+2026-02-07 11:57:26,180 | ------------------------------------------------------------
+2026-02-07 16:49:29,568 | Query: 催化剂H-ZSM-5参与反应的完整信息
+2026-02-07 16:49:29,568 | Step 1: 查找节点 H-ZSM-5
+2026-02-07 16:49:29,569 |   Cypher 1: MATCH (z:zeolite {name: "H-ZSM-5"})
+RETURN z
+LIMIT 100
+2026-02-07 16:49:29,569 | ------------------------------------------------------------
+2026-02-07 16:49:52,696 | Query: 催化剂H-ZSM-5参与反应的完整信息
+2026-02-07 16:49:52,696 | Step 2: 查找催化剂 H-ZSM-5 的完整信息（含属性与活性位点）
+2026-02-07 16:49:52,696 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)
+OPTIONAL MATCH p2 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS activeSite_paths, collect(DISTINCT p2) AS property_paths
+LIMIT 100
+2026-02-07 16:49:52,696 | ------------------------------------------------------------
+2026-02-07 16:50:21,743 | Query: 催化剂H-ZSM-5参与反应的完整信息
+2026-02-07 16:50:21,743 | Step 3: 查找催化剂 H-ZSM-5 的完整反应网络（含反应物和生成物）
+2026-02-07 16:50:21,743 |   Cypher 1: MATCH p1 = (z:zeolite {name: "H-ZSM-5"})-[:LINKS]->(site:activeSite)-[:LINKS]->(r:reactionNode)
+OPTIONAL MATCH p2 = (reactant:molecular)-[:LINKS]->(r)
+OPTIONAL MATCH p3 = (r)-[:LINKS]->(product:molecular)
+OPTIONAL MATCH p4 = (z)-[:LINKS]->(c:propertyCategory)-[:LINKS]->(prop:propertyNode)
+RETURN collect(DISTINCT p1) AS catalyst_reaction_paths,
+       collect(DISTINCT p2) AS reactant_paths,
+       collect(DISTINCT p3) AS product_paths,
+       collect(DISTINCT p4) AS catalyst_property_paths
+LIMIT 100
+2026-02-07 16:50:21,743 | ------------------------------------------------------------

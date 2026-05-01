@@ -1,0 +1,1283 @@
+{
+  "catalyst_synthesis": {
+    "type": "object",
+    "required": true,
+    "description": "Information regarding the synthesis and preparation of the catalytic materials.",
+    "introduced_in_round": 0,
+    "properties": {
+      "catalyst_name": {
+        "type": "string",
+        "required": true,
+        "description": "The specific identifier or name of the catalyst sample used in the study.",
+        "introduced_in_round": 0
+      },
+      "parent_material": {
+        "type": "string",
+        "required": false,
+        "description": "The base material or support used before modification (e.g., ZSM-5).",
+        "introduced_in_round": 0
+      },
+      "synthesis_method": {
+        "type": "string",
+        "required": false,
+        "description": "General description of the synthesis technique (e.g., wet impregnation, chemical dealumination).",
+        "introduced_in_round": 0
+      },
+      "preparation_details": {
+        "type": "object",
+        "required": false,
+        "description": "Specific parameters and steps in the preparation process.",
+        "introduced_in_round": 0,
+        "properties": {
+          "dealumination_agent": {
+            "type": "string",
+            "required": false,
+            "description": "Chemical agent used for dealumination (e.g., (NH4)2SiF6).",
+            "introduced_in_round": 0
+          },
+          "metal_precursor": {
+            "type": "string",
+            "required": false,
+            "description": "Precursor used for metal deposition (e.g., Au(en)2Cl3).",
+            "introduced_in_round": 0
+          },
+          "structure_directing_agent": {
+            "type": "string",
+            "required": false,
+            "description": "Organic template or OSDA used during synthesis (e.g., carbocation-like mimics).",
+            "introduced_in_round": 1
+          },
+          "ligand_agent": {
+            "type": "string",
+            "required": false,
+            "description": "Ligand or chelating agent used to protect metal ions or control cluster formation (e.g., EDTA).",
+            "introduced_in_round": 5
+          },
+          "calcination_temperature_celsius": {
+            "type": "number",
+            "required": false,
+            "description": "Temperature used for calcination of the catalyst.",
+            "introduced_in_round": 0
+          },
+          "calcination_time_hours": {
+            "type": "number",
+            "required": false,
+            "description": "Duration of the calcination step.",
+            "introduced_in_round": 0
+          },
+          "surface_modification_treatment": {
+            "type": "string",
+            "required": false,
+            "description": "Treatments applied to modify the surface properties, such as passivation (e.g., CLD with TEOS).",
+            "introduced_in_round": 3
+          }
+        }
+      }
+    }
+  },
+  "catalyst_characterization": {
+    "type": "object",
+    "required": true,
+    "description": "Physicochemical properties of the synthesized catalysts.",
+    "introduced_in_round": 0,
+    "properties": {
+      "zeolite_framework_type": {
+        "type": "string",
+        "required": false,
+        "description": "Three-letter code identifying the zeolite framework topology (e.g., MFI, BEA, FAU).",
+        "introduced_in_round": 8
+      },
+      "framework_ring_size": {
+        "type": "string",
+        "required": false,
+        "description": "Size of the rings defining the pore openings (e.g., 10-membered ring, 12MR).",
+        "introduced_in_round": 8
+      },
+      "channel_dimensionality": {
+        "type": "string",
+        "required": false,
+        "description": "Dimensionality of the pore channel system (e.g., 3D, 2D, 1D).",
+        "introduced_in_round": 8
+      },
+      "crystallite_size_microns": {
+        "type": "string",
+        "required": false,
+        "description": "Average size or size range of the catalyst crystals/particles (e.g., 0.2-0.3 μm).",
+        "introduced_in_round": 3
+      },
+      "material_composition": {
+        "type": "object",
+        "required": false,
+        "description": "Elemental and chemical composition of the catalyst.",
+        "introduced_in_round": 0,
+        "properties": {
+          "metal_loading_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Weight percentage of the active metal (e.g., Au) loaded.",
+            "introduced_in_round": 0
+          },
+          "si_al_ratio_bulk": {
+            "type": "number",
+            "required": false,
+            "description": "Bulk silicon-to-aluminum ratio.",
+            "introduced_in_round": 0
+          },
+          "si_al_ratio_framework": {
+            "type": "number",
+            "required": false,
+            "description": "Framework silicon-to-aluminum ratio determined by NMR.",
+            "introduced_in_round": 0
+          },
+          "proton_to_aluminum_ratio": {
+            "type": "number",
+            "required": false,
+            "description": "Ratio of protons to aluminum atoms, often determined by isotopic exchange (H+/Al).",
+            "introduced_in_round": 7
+          },
+          "residual_alkali_content_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Content of residual alkali metals (e.g., Na) remaining after exchange.",
+            "introduced_in_round": 7
+          }
+        }
+      },
+      "aluminum_distribution": {
+        "type": "object",
+        "required": false,
+        "description": "Analysis of aluminum siting within the zeolite framework.",
+        "introduced_in_round": 0,
+        "properties": {
+          "total_al_content_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Total aluminum content.",
+            "introduced_in_round": 0
+          },
+          "single_al_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Concentration of isolated 'single' aluminum atoms.",
+            "introduced_in_round": 0
+          },
+          "close_al_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Concentration of paired or 'close' aluminum atoms.",
+            "introduced_in_round": 0
+          },
+          "single_al_percentage": {
+            "type": "number",
+            "required": false,
+            "description": "Percentage of aluminum atoms in 'single' sites.",
+            "introduced_in_round": 0
+          },
+          "aluminum_siting_location": {
+            "type": "string",
+            "required": false,
+            "description": "Specific location of Al sites within the pore structure (e.g., straight channel, intersection).",
+            "introduced_in_round": 6
+          }
+        }
+      },
+      "defect_properties": {
+        "type": "object",
+        "required": false,
+        "description": "Characterization of structural defects in the zeolite framework (e.g., silanol nests).",
+        "introduced_in_round": 5,
+        "properties": {
+          "defect_type": {
+            "type": "string",
+            "required": false,
+            "description": "Type of defect identified (e.g., silanol nest, open Sn site).",
+            "introduced_in_round": 5
+          },
+          "defect_concentration": {
+            "type": "string",
+            "required": false,
+            "description": "Concentration or relative abundance of the defects.",
+            "introduced_in_round": 5
+          },
+          "identification_technique": {
+            "type": "string",
+            "required": false,
+            "description": "Technique used to identify the defects (e.g., DRIFTS, NMR).",
+            "introduced_in_round": 5
+          }
+        }
+      },
+      "textural_properties": {
+        "type": "object",
+        "required": false,
+        "description": "Surface area and pore structure characteristics.",
+        "introduced_in_round": 0,
+        "properties": {
+          "bet_surface_area_m2_g": {
+            "type": "number",
+            "required": false,
+            "description": "Specific surface area calculated by BET method.",
+            "introduced_in_round": 0
+          },
+          "micropore_surface_area_m2_g": {
+            "type": "number",
+            "required": false,
+            "description": "Surface area attributed to micropores.",
+            "introduced_in_round": 0
+          },
+          "mesopore_surface_area_m2_g": {
+            "type": "number",
+            "required": false,
+            "description": "Surface area attributed to mesopores.",
+            "introduced_in_round": 0
+          },
+          "total_pore_volume_cm3_g": {
+            "type": "number",
+            "required": false,
+            "description": "Total pore volume of the catalyst.",
+            "introduced_in_round": 0
+          },
+          "micropore_volume_cm3_g": {
+            "type": "number",
+            "required": false,
+            "description": "Volume of micropores.",
+            "introduced_in_round": 0
+          },
+          "pore_architecture": {
+            "type": "string",
+            "required": false,
+            "description": "Description of the pore connectivity and hierarchy (e.g., wormhole-like, hierarchical).",
+            "introduced_in_round": 5
+          },
+          "pore_size_distribution": {
+            "type": "string",
+            "required": false,
+            "description": "Description of pore size range and distribution.",
+            "introduced_in_round": 0
+          }
+        }
+      },
+      "acidity_properties": {
+        "type": "object",
+        "required": false,
+        "description": "Characterization of acidic sites.",
+        "introduced_in_round": 0,
+        "properties": {
+          "total_acid_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Total concentration of acid sites.",
+            "introduced_in_round": 0
+          },
+          "strong_acid_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Concentration of strong acid sites (e.g., from high-temp TPD).",
+            "introduced_in_round": 0
+          },
+          "bronsted_lewis_ratio": {
+            "type": "number",
+            "required": false,
+            "description": "Ratio of Brønsted to Lewis acid sites (B/L or L/B).",
+            "introduced_in_round": 0
+          },
+          "acid_strength_distribution": {
+            "type": "string",
+            "required": false,
+            "description": "Qualitative description of weak, medium, and strong acid sites.",
+            "introduced_in_round": 0
+          },
+          "acid_site_density": {
+            "type": "string",
+            "required": false,
+            "description": "Density of acid sites per unit area or volume, often used to describe proximity.",
+            "introduced_in_round": 6
+          },
+          "external_acid_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Concentration of acid sites located on the external surface of the crystal.",
+            "introduced_in_round": 3
+          },
+          "internal_acid_sites_mmol_g": {
+            "type": "number",
+            "required": false,
+            "description": "Concentration of acid sites located within the internal pore system.",
+            "introduced_in_round": 3
+          },
+          "acidity_probe_molecules": {
+            "type": "array",
+            "required": false,
+            "description": "Molecules used to probe acidity (e.g., Pyridine, DTBPy).",
+            "introduced_in_round": 3,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "metal_species_properties": {
+        "type": "object",
+        "required": false,
+        "description": "Properties of the supported metal species (e.g., Au, Zn, Pt, Sn).",
+        "introduced_in_round": 0,
+        "properties": {
+          "particle_size_nm": {
+            "type": "string",
+            "required": false,
+            "description": "Size or size range of metal nanoparticles.",
+            "introduced_in_round": 0
+          },
+          "oxidation_state": {
+            "type": "string",
+            "required": false,
+            "description": "Oxidation state of the metal (e.g., Au0, Au+, Zn2+, Sn4+).",
+            "introduced_in_round": 0
+          },
+          "coordination_environment": {
+            "type": "string",
+            "required": false,
+            "description": "Description of local coordination (e.g., Au-Au bonds, Pt-O-Sn).",
+            "introduced_in_round": 0
+          },
+          "bond_lengths_angstrom": {
+            "type": "string",
+            "required": false,
+            "description": "Measured or calculated bond distances (e.g., Zn-O distance).",
+            "introduced_in_round": 4
+          },
+          "electronic_interaction": {
+            "type": "string",
+            "required": false,
+            "description": "Evidence of electron transfer or metal-support interaction.",
+            "introduced_in_round": 0
+          }
+        }
+      }
+    }
+  },
+  "reaction_intermediate_characterization": {
+    "type": "object",
+    "required": false,
+    "description": "Detailed characterization of reaction intermediates and transient species identified during the reaction.",
+    "introduced_in_round": 1,
+    "properties": {
+      "intermediate_species": {
+        "type": "array",
+        "required": false,
+        "description": "List of distinct intermediate species characterized.",
+        "introduced_in_round": 1,
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "required": false,
+              "description": "Name or chemical identifier of the species (e.g., tert-butyl cation, heptamethylbenzenium).",
+              "introduced_in_round": 1
+            },
+            "category": {
+              "type": "string",
+              "required": false,
+              "description": "Classification of the species (e.g., carbenium ion, carbonium ion, alkoxide).",
+              "introduced_in_round": 1
+            },
+            "host_framework": {
+              "type": "string",
+              "required": false,
+              "description": "Zeolite framework or catalyst in which the intermediate was observed.",
+              "introduced_in_round": 1
+            },
+            "role": {
+              "type": "string",
+              "required": false,
+              "description": "The specific role of the intermediate (e.g., active intermediate, coke precursor, transition state).",
+              "introduced_in_round": 1
+            },
+            "confinement_location": {
+              "type": "string",
+              "required": false,
+              "description": "Location where the species is confined (e.g., channel intersection, sinusoidal channel).",
+              "introduced_in_round": 6
+            },
+            "structural_features": {
+              "type": "string",
+              "required": false,
+              "description": "Description of geometric features (e.g., bond angles, coordination number).",
+              "introduced_in_round": 4
+            },
+            "geometric_parameters": {
+              "type": "object",
+              "required": false,
+              "description": "Key geometric measures (bond lengths, angles) defining the intermediate structure.",
+              "introduced_in_round": 9
+            },
+            "formation_energy": {
+              "type": "string",
+              "required": false,
+              "description": "Energy required to form the intermediate (e.g., endothermic by X kJ/mol).",
+              "introduced_in_round": 4
+            },
+            "adsorption_energy_kj_mol": {
+              "type": "number",
+              "required": false,
+              "description": "Calculated adsorption energy of the species.",
+              "introduced_in_round": 9
+            },
+            "isotopic_content_percentage": {
+              "type": "string",
+              "required": false,
+              "description": "Measured isotopic incorporation (e.g., % 12C) in the species.",
+              "introduced_in_round": 6
+            },
+            "spectroscopic_signatures": {
+              "type": "object",
+              "required": false,
+              "description": "Spectroscopic data identifying the species.",
+              "introduced_in_round": 1,
+              "properties": {
+                "nmr_chemical_shifts_ppm": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Observed NMR chemical shifts (e.g., 13C, 1H).",
+                  "introduced_in_round": 1
+                },
+                "uv_vis_bands_nm": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Observed UV-vis absorption bands.",
+                  "introduced_in_round": 1
+                },
+                "ir_vibrations_cm1": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Observed IR vibrational frequencies.",
+                  "introduced_in_round": 1
+                },
+                "fluorescence_properties": {
+                  "type": "string",
+                  "required": false,
+                  "description": "Description of fluorescence emission or confocal microscopy observations.",
+                  "introduced_in_round": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "catalytic_performance": {
+    "type": "object",
+    "required": true,
+    "description": "Experimental data from catalytic reaction testing.",
+    "introduced_in_round": 0,
+    "properties": {
+      "reaction_type": {
+        "type": "string",
+        "required": true,
+        "description": "Name or type of the reaction (e.g., n-octane cracking).",
+        "introduced_in_round": 0
+      },
+      "reaction_mode": {
+        "type": "string",
+        "required": false,
+        "description": "Mode of reactor operation (e.g., Continuous flow, Pulse, In-situ, Ex-situ).",
+        "introduced_in_round": 6
+      },
+      "performance_regime": {
+        "type": "string",
+        "required": false,
+        "description": "Phase of the reaction where metrics were recorded (e.g., Induction period, Steady state, Deactivation).",
+        "introduced_in_round": 6
+      },
+      "reactant": {
+        "type": "string",
+        "required": false,
+        "description": "Main reactant used (e.g., Guaiacol, Phenol).",
+        "introduced_in_round": 0
+      },
+      "feedstock_type": {
+        "type": "string",
+        "required": false,
+        "description": "Specific type of biomass or feedstock used (e.g., Pine sawdust, Algal biomass).",
+        "introduced_in_round": 8
+      },
+      "reactor_conditions": {
+        "type": "object",
+        "required": false,
+        "description": "Operating conditions for the reaction test.",
+        "introduced_in_round": 0,
+        "properties": {
+          "temperature_celsius": {
+            "type": "number",
+            "required": false,
+            "description": "Reaction temperature.",
+            "introduced_in_round": 0
+          },
+          "pressure": {
+            "type": "string",
+            "required": false,
+            "description": "Reaction pressure.",
+            "introduced_in_round": 0
+          },
+          "contact_time_seconds": {
+            "type": "number",
+            "required": false,
+            "description": "Contact time or residence time.",
+            "introduced_in_round": 0
+          },
+          "space_velocity": {
+            "type": "string",
+            "required": false,
+            "description": "Space velocity used (e.g., GHSV, WHSV).",
+            "introduced_in_round": 5
+          },
+          "pulse_volume_microliters": {
+            "type": "number",
+            "required": false,
+            "description": "Volume of reactant injected per pulse in pulse-mode experiments.",
+            "introduced_in_round": 6
+          },
+          "catalyst_to_feed_mass_ratio": {
+            "type": "number",
+            "required": false,
+            "description": "Mass ratio of catalyst to biomass/feedstock.",
+            "introduced_in_round": 8
+          },
+          "heating_rate_celsius_per_min": {
+            "type": "string",
+            "required": false,
+            "description": "Heating rate applied during pyrolysis.",
+            "introduced_in_round": 8
+          },
+          "carrier_gas_flow_rate_ml_min": {
+            "type": "string",
+            "required": false,
+            "description": "Flow rate of the carrier gas.",
+            "introduced_in_round": 8
+          }
+        }
+      },
+      "kinetic_metrics": {
+        "type": "object",
+        "required": false,
+        "description": "Quantitative kinetic parameters derived from performance testing.",
+        "introduced_in_round": 5,
+        "properties": {
+          "specific_activity": {
+            "type": "string",
+            "required": false,
+            "description": "Activity normalized by mass of catalyst or active metal (e.g., mol_prod g_cat-1 h-1).",
+            "introduced_in_round": 5
+          },
+          "site_time_yield": {
+            "type": "string",
+            "required": false,
+            "description": "Yield per active site per unit time (e.g., 10^-3 s^-1).",
+            "introduced_in_round": 7
+          },
+          "reaction_rate_constant": {
+            "type": "string",
+            "required": false,
+            "description": "Calculated rate constant (e.g., k_f).",
+            "introduced_in_round": 5
+          },
+          "apparent_activation_energy_kj_mol": {
+            "type": "number",
+            "required": false,
+            "description": "Apparent activation energy determined from Arrhenius plots.",
+            "introduced_in_round": 5
+          },
+          "turnover_frequency_h_minus_1": {
+            "type": "number",
+            "required": false,
+            "description": "Turnover frequency (TOF) of the reaction.",
+            "introduced_in_round": 5
+          },
+          "isotopic_exchange_rate": {
+            "type": "string",
+            "required": false,
+            "description": "Rate of isotopic exchange or scrambling measured in tracer studies.",
+            "introduced_in_round": 7
+          },
+          "kinetic_isotope_effect_parameter": {
+            "type": "string",
+            "required": false,
+            "description": "Measured kinetic isotope effect (KIE) value (e.g., rH/rD).",
+            "introduced_in_round": 7
+          },
+          "deactivation_coefficient": {
+            "type": "string",
+            "required": false,
+            "description": "Parameter quantifying catalyst deactivation rate (e.g., kd or inverse deactivation coefficient).",
+            "introduced_in_round": 5
+          }
+        }
+      },
+      "performance_metrics": {
+        "type": "object",
+        "required": false,
+        "description": "Quantitative results of the catalytic test.",
+        "introduced_in_round": 0,
+        "properties": {
+          "conversion_percentage": {
+            "type": "number",
+            "required": false,
+            "description": "Conversion of the reactant.",
+            "introduced_in_round": 0
+          },
+          "degree_of_deoxygenation_percentage": {
+            "type": "number",
+            "required": false,
+            "description": "Percentage of oxygen removed from the feedstock (DOD).",
+            "introduced_in_round": 8
+          },
+          "bio_oil_yield_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Yield of the liquid bio-oil fraction.",
+            "introduced_in_round": 8
+          },
+          "char_yield_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Yield of the solid char fraction.",
+            "introduced_in_round": 8
+          },
+          "gas_yield_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Yield of the gaseous product fraction.",
+            "introduced_in_round": 8
+          },
+          "water_yield_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Yield of water produced.",
+            "introduced_in_round": 8
+          },
+          "bio_oil_oxygen_content_wt_percent": {
+            "type": "number",
+            "required": false,
+            "description": "Oxygen content in the upgraded bio-oil.",
+            "introduced_in_round": 8
+          },
+          "bio_oil_h_c_molar_ratio": {
+            "type": "number",
+            "required": false,
+            "description": "Hydrogen to Carbon molar ratio in the bio-oil.",
+            "introduced_in_round": 8
+          },
+          "bio_oil_o_c_molar_ratio": {
+            "type": "number",
+            "required": false,
+            "description": "Oxygen to Carbon molar ratio in the bio-oil.",
+            "introduced_in_round": 8
+          },
+          "product_yield_percentage": {
+            "type": "object",
+            "required": false,
+            "description": "Yield of specific products (Conversion * Selectivity).",
+            "introduced_in_round": 3,
+            "properties": {
+              "light_olefins": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 3
+              },
+              "propylene": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 3
+              },
+              "ethylene": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 3
+              },
+              "butenes": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 3
+              },
+              "aromatics": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 3
+              }
+            }
+          },
+          "product_selectivity_percentage": {
+            "type": "object",
+            "required": false,
+            "description": "Selectivity towards specific products.",
+            "introduced_in_round": 0,
+            "properties": {
+              "propylene": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "ethylene": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "butenes": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "isobutane": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "n_butane": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "aromatics": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              },
+              "c1_c2_alkanes": {
+                "type": "number",
+                "required": false,
+                "introduced_in_round": 0
+              }
+            }
+          },
+          "hydrogen_transfer_index": {
+            "type": "number",
+            "required": false,
+            "description": "Index quantifying hydrogen transfer activity (e.g., C5 alkanes / total C5).",
+            "introduced_in_round": 6
+          },
+          "isotopic_distribution_pattern": {
+            "type": "string",
+            "required": false,
+            "description": "Observed distribution of isotopes in products (e.g., binomial, hypergeometric).",
+            "introduced_in_round": 7
+          },
+          "coke_yield_percentage": {
+            "type": "number",
+            "required": false,
+            "description": "Amount of coke formed as a percentage of feed.",
+            "introduced_in_round": 3
+          }
+        }
+      },
+      "stability_test": {
+        "type": "object",
+        "required": false,
+        "description": "Information on catalyst stability and reusability.",
+        "introduced_in_round": 0,
+        "properties": {
+          "number_of_cycles": {
+            "type": "number",
+            "required": false,
+            "description": "Number of reaction cycles tested.",
+            "introduced_in_round": 0
+          },
+          "time_on_stream_hours": {
+            "type": "number",
+            "required": false,
+            "description": "Duration of continuous operation tested.",
+            "introduced_in_round": 5
+          },
+          "observation": {
+            "type": "string",
+            "required": false,
+            "description": "Qualitative observation of stability (e.g., stable, deactivation).",
+            "introduced_in_round": 0
+          }
+        }
+      }
+    }
+  },
+  "industrial_process_specification": {
+    "type": "object",
+    "required": false,
+    "description": "Details identifying the industrial process, its design capacity, and simulation basis.",
+    "introduced_in_round": 2,
+    "properties": {
+      "process_name": {
+        "type": "string",
+        "required": false,
+        "description": "Name of the process variant (e.g., Calcium carbide process with heat integration).",
+        "introduced_in_round": 2
+      },
+      "process_type": {
+        "type": "string",
+        "required": false,
+        "description": "Classification of the synthesis route (e.g., Calcium carbide based, Urea based).",
+        "introduced_in_round": 2
+      },
+      "annual_capacity_tons": {
+        "type": "number",
+        "required": false,
+        "description": "Designed annual output of the process in tons.",
+        "introduced_in_round": 2
+      },
+      "technology_readiness_level": {
+        "type": "string",
+        "required": false,
+        "description": "Assessed TRL of the technology (e.g., TRL 3-4, TRL 9).",
+        "introduced_in_round": 8
+      },
+      "simulation_software": {
+        "type": "string",
+        "required": false,
+        "description": "Software used for modeling and simulation (e.g., Aspen Plus V10).",
+        "introduced_in_round": 2
+      },
+      "heat_integration_strategy": {
+        "type": "string",
+        "required": false,
+        "description": "Description of heat recovery and integration methods applied.",
+        "introduced_in_round": 2
+      }
+    }
+  },
+  "techno_economic_assessment": {
+    "type": "object",
+    "required": false,
+    "description": "Economic evaluation metrics and cost analysis of the process.",
+    "introduced_in_round": 2,
+    "properties": {
+      "currency_basis": {
+        "type": "string",
+        "required": false,
+        "description": "Year and currency basis for the economic analysis (e.g., 2021 USD).",
+        "introduced_in_round": 2
+      },
+      "total_capital_investment_million_usd": {
+        "type": "number",
+        "required": false,
+        "description": "Total investment cost required for the process.",
+        "introduced_in_round": 2
+      },
+      "unit_production_cost_usd_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Cost to produce one unit of product.",
+        "introduced_in_round": 2
+      },
+      "product_profit_usd_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Profit generated per unit of product.",
+        "introduced_in_round": 2
+      },
+      "net_present_value_million_usd": {
+        "type": "number",
+        "required": false,
+        "description": "Calculated Net Present Value (NPV) of the project.",
+        "introduced_in_round": 2
+      },
+      "payback_period_years": {
+        "type": "number",
+        "required": false,
+        "description": "Time required to recover the investment cost.",
+        "introduced_in_round": 2
+      },
+      "economic_sensitivity_factors": {
+        "type": "array",
+        "required": false,
+        "description": "List of factors analyzed for their impact on economic performance (e.g., Electricity price, Carbon tax).",
+        "introduced_in_round": 2,
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "environmental_and_efficiency_metrics": {
+    "type": "object",
+    "required": false,
+    "description": "Environmental impact, energy consumption, and thermodynamic efficiency indicators.",
+    "introduced_in_round": 2,
+    "properties": {
+      "total_energy_consumption_gj_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Total energy consumed per unit of product.",
+        "introduced_in_round": 2
+      },
+      "exergy_efficiency_percentage": {
+        "type": "number",
+        "required": false,
+        "description": "Exergy efficiency of the overall process.",
+        "introduced_in_round": 2
+      },
+      "exergy_loss_rate_kw": {
+        "type": "number",
+        "required": false,
+        "description": "Rate of exergy loss in the process.",
+        "introduced_in_round": 2
+      },
+      "element_efficiency_nitrogen_percentage": {
+        "type": "number",
+        "required": false,
+        "description": "Efficiency of nitrogen utilization in the product.",
+        "introduced_in_round": 2
+      },
+      "element_efficiency_carbon_percentage": {
+        "type": "number",
+        "required": false,
+        "description": "Efficiency of carbon utilization in the product.",
+        "introduced_in_round": 2
+      },
+      "co2_emissions_total_ton_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Total carbon dioxide emissions per unit of product.",
+        "introduced_in_round": 2
+      },
+      "co2_emissions_direct_ton_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Direct carbon dioxide emissions from the process.",
+        "introduced_in_round": 2
+      },
+      "co2_emissions_indirect_ton_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Indirect carbon dioxide emissions (e.g., from electricity generation).",
+        "introduced_in_round": 2
+      },
+      "so2_emissions_ton_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Sulfur dioxide emissions per unit of product.",
+        "introduced_in_round": 2
+      },
+      "nox_emissions_ton_per_ton": {
+        "type": "number",
+        "required": false,
+        "description": "Nitrogen oxides emissions per unit of product.",
+        "introduced_in_round": 2
+      }
+    }
+  },
+  "theoretical_investigation": {
+    "type": "object",
+    "required": false,
+    "description": "Computational studies and theoretical modeling outcomes presented in the article.",
+    "introduced_in_round": 1,
+    "properties": {
+      "methodology": {
+        "type": "string",
+        "required": false,
+        "description": "Computational method used (e.g., DFT, AIMD, hybrid QM:QM).",
+        "introduced_in_round": 1
+      },
+      "software_package": {
+        "type": "string",
+        "required": false,
+        "description": "Software used for calculations (e.g., VASP, Gaussian).",
+        "introduced_in_round": 4
+      },
+      "dft_functional": {
+        "type": "string",
+        "required": false,
+        "description": "Density functional used (e.g., PBE, B3LYP, BEEF-vdW).",
+        "introduced_in_round": 4
+      },
+      "basis_set": {
+        "type": "string",
+        "required": false,
+        "description": "Basis set used for electronic structure calculations (e.g., 6-31G(d,p), def2-TZVP).",
+        "introduced_in_round": 9
+      },
+      "force_field": {
+        "type": "string",
+        "required": false,
+        "description": "Force field used in molecular mechanics or hybrid calculations (e.g., UFF, CHARMM).",
+        "introduced_in_round": 9
+      },
+      "dispersion_correction_method": {
+        "type": "string",
+        "required": false,
+        "description": "Method used to account for van der Waals interactions.",
+        "introduced_in_round": 4
+      },
+      "model_details": {
+        "type": "string",
+        "required": false,
+        "description": "Description of the zeolite model (e.g., 46T cluster, periodic model).",
+        "introduced_in_round": 1
+      },
+      "modeled_active_sites": {
+        "type": "array",
+        "required": false,
+        "description": "Specific active site configurations modeled.",
+        "introduced_in_round": 4,
+        "items": {
+          "type": "object",
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Label used in the paper (e.g., ZnOH+, Site A).",
+              "introduced_in_round": 4
+            },
+            "composition": {
+              "type": "string",
+              "description": "Chemical composition of the site.",
+              "introduced_in_round": 4
+            },
+            "framework_location": {
+              "type": "string",
+              "description": "Location within the framework (e.g., T12).",
+              "introduced_in_round": 4
+            },
+            "coordination_environment": {
+              "type": "string",
+              "description": "Local geometry and coordination.",
+              "introduced_in_round": 4
+            },
+            "geometric_parameters": {
+              "type": "object",
+              "required": false,
+              "description": "Key geometric measures (bond lengths, angles) defining the active site structure.",
+              "introduced_in_round": 9
+            }
+          }
+        }
+      },
+      "thermodynamic_stability_analysis": {
+        "type": "object",
+        "required": false,
+        "description": "Analysis of the thermodynamic stability of different species or phases.",
+        "introduced_in_round": 4,
+        "properties": {
+          "conditions": {
+            "type": "string",
+            "required": false,
+            "description": "Conditions under which stability was analyzed (e.g., H2/H2O pressure).",
+            "introduced_in_round": 4
+          },
+          "relative_stability_order": {
+            "type": "string",
+            "required": false,
+            "description": "Observed order of stability for the modeled sites.",
+            "introduced_in_round": 4
+          }
+        }
+      },
+      "microkinetic_modeling_details": {
+        "type": "object",
+        "required": false,
+        "description": "Details and results of microkinetic simulations.",
+        "introduced_in_round": 4,
+        "properties": {
+          "software": {
+            "type": "string",
+            "required": false,
+            "introduced_in_round": 4
+          },
+          "temperature_range_k": {
+            "type": "string",
+            "required": false,
+            "introduced_in_round": 4
+          },
+          "pressure_range_bar": {
+            "type": "string",
+            "required": false,
+            "introduced_in_round": 4
+          },
+          "rate_determining_step": {
+            "type": "string",
+            "required": false,
+            "introduced_in_round": 4
+          },
+          "predicted_turnover_frequency": {
+            "type": "string",
+            "required": false,
+            "description": "Calculated TOF values or ranges.",
+            "introduced_in_round": 4
+          }
+        }
+      },
+      "elementary_steps_energetics": {
+        "type": "array",
+        "required": false,
+        "description": "Structured data for elementary reaction steps.",
+        "introduced_in_round": 4,
+        "items": {
+          "type": "object",
+          "properties": {
+            "step_label": {
+              "type": "string",
+              "description": "Label of the step (e.g., TS1).",
+              "introduced_in_round": 4
+            },
+            "reaction_equation": {
+              "type": "string",
+              "description": "Chemical equation for the step.",
+              "introduced_in_round": 4
+            },
+            "site_label": {
+              "type": "string",
+              "description": "The active site on which this step occurs.",
+              "introduced_in_round": 4
+            },
+            "activation_barrier_kj_mol": {
+              "type": "number",
+              "description": "Activation energy barrier.",
+              "introduced_in_round": 4
+            },
+            "reaction_energy_kj_mol": {
+              "type": "number",
+              "description": "Reaction energy or enthalpy.",
+              "introduced_in_round": 4
+            },
+            "enthalpy_barrier_kj_mol": {
+              "type": "number",
+              "description": "Specific enthalpy barrier.",
+              "introduced_in_round": 4
+            },
+            "free_energy_barrier_kj_mol": {
+              "type": "number",
+              "description": "Specific free energy barrier.",
+              "introduced_in_round": 4
+            }
+          }
+        }
+      },
+      "energetics": {
+        "type": "object",
+        "required": false,
+        "description": "Calculated energetic parameters (legacy/summary).",
+        "introduced_in_round": 1,
+        "properties": {
+          "activation_barriers": {
+            "type": "string",
+            "required": false,
+            "description": "Calculated activation energies or barriers (e.g., in kJ/mol).",
+            "introduced_in_round": 1
+          },
+          "reaction_energies": {
+            "type": "string",
+            "required": false,
+            "description": "Thermodynamic reaction energies or heat of adsorption.",
+            "introduced_in_round": 1
+          }
+        }
+      },
+      "dynamics": {
+        "type": "object",
+        "required": false,
+        "description": "Dynamic properties from simulations.",
+        "introduced_in_round": 1,
+        "properties": {
+          "species_lifetimes": {
+            "type": "string",
+            "required": false,
+            "description": "Calculated lifetimes of intermediates (e.g., in ps).",
+            "introduced_in_round": 1
+          },
+          "dynamic_behavior": {
+            "type": "string",
+            "required": false,
+            "description": "Observations from molecular dynamics (e.g., rotational freedom, diffusion).",
+            "introduced_in_round": 1
+          }
+        }
+      }
+    }
+  },
+  "reaction_mechanism": {
+    "type": "object",
+    "required": false,
+    "description": "Insights into the reaction mechanism and active site roles.",
+    "introduced_in_round": 0,
+    "properties": {
+      "proposed_pathway": {
+        "type": "string",
+        "required": false,
+        "description": "Description of the dominant reaction pathway (e.g., monomolecular vs bimolecular).",
+        "introduced_in_round": 0
+      },
+      "dominant_reaction_pathway_types": {
+        "type": "array",
+        "required": false,
+        "description": "List of dominant reaction types identified (e.g., HDO, Decarbonylation, Dehydration).",
+        "introduced_in_round": 8,
+        "items": {
+          "type": "string"
+        }
+      },
+      "reaction_cycles": {
+        "type": "array",
+        "required": false,
+        "description": "Specific catalytic cycles identified in the mechanism (e.g., aromatic cycle, alkene cycle).",
+        "introduced_in_round": 1,
+        "items": {
+          "type": "string"
+        }
+      },
+      "mechanistic_concepts": {
+        "type": "array",
+        "required": false,
+        "description": "Theoretical concepts applied to explain reactivity (e.g., Frustrated Lewis Pairs, confinement effect).",
+        "introduced_in_round": 1,
+        "items": {
+          "type": "string"
+        }
+      },
+      "role_of_gold": {
+        "type": "string",
+        "required": false,
+        "description": "Specific function attributed to gold species (e.g., dehydrogenation, electron donor).",
+        "introduced_in_round": 0
+      },
+      "role_of_metal_species": {
+        "type": "string",
+        "required": false,
+        "description": "Specific function attributed to the metal species (e.g., dehydrogenation, H-atom recombination) generalizing beyond gold.",
+        "introduced_in_round": 7
+      },
+      "role_of_acidity": {
+        "type": "string",
+        "required": false,
+        "description": "Function of acid sites in the mechanism.",
+        "introduced_in_round": 0
+      },
+      "hydrogen_spillover_role": {
+        "type": "string",
+        "required": false,
+        "description": "Description of the role of hydrogen spillover in the reaction.",
+        "introduced_in_round": 5
+      },
+      "synergistic_effects": {
+        "type": "string",
+        "required": false,
+        "description": "Description of cooperation between different active sites (e.g., Au and acid sites).",
+        "introduced_in_round": 0
+      },
+      "rate_determining_step_experimental": {
+        "type": "string",
+        "required": false,
+        "description": "The rate-determining step identified through experimental kinetics and isotopic studies.",
+        "introduced_in_round": 7
+      },
+      "step_reversibility": {
+        "type": "string",
+        "required": false,
+        "description": "Description of the reversibility of key mechanistic steps (e.g., dehydrogenation, adsorption).",
+        "introduced_in_round": 7
+      },
+      "surface_coverage_dynamics": {
+        "type": "string",
+        "required": false,
+        "description": "Dynamics of surface species coverage, including concepts like virtual surface pressure or pool composition.",
+        "introduced_in_round": 7
+      }
+    }
+  }
+}

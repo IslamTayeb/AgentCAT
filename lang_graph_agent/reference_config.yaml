@@ -1,0 +1,83 @@
+# Paper Extract Pipeline 配置文件
+
+# 全局 API 配置（默认，可被各阶段覆盖）
+api:
+  base_url: "https://ark.cn-beijing.volces.com/api/v3"
+  model: "doubao-seed-1-8-251228"
+  api_key_env: "ARK_API_KEY"  # 从此环境变量读取 API Key
+
+# 规划阶段（交互式生成关键要素框架）
+planning:
+  enabled: true                # 是否启用
+  save_framework: true         # 是否保存框架到文件（便于调试）
+  framework_file: "framework.json"  # 框架保存路径（相对于 output.dir）
+  # 独立 API 配置（可选，不设置则使用全局 api）
+  # api:
+  #   model: "doubao-pro-32k"
+  #   api_key_env: "ARK_API_KEY_PLANNING"
+
+# Schema 演化阶段（PDF 列表，轮询演化）
+schema_evolution:
+  enabled: true              # 是否启用
+  rounds: 2                  # 演化轮数（必须能被 PDF 数量整除）
+  # initial_schema: ""       # 初始 schema 文件路径（可选）
+  input:
+    path:
+      - "./pdf/my.pdf"
+      -
+  # 独立 API 配置（可选，不设置则使用全局 api）
+  # api:
+  #   model: "doubao-pro-32k"
+  #   api_key_env: "ARK_API_KEY_SCHEMA"
+
+# 数据抽取阶段（目录扫描）
+extraction:
+  enabled: true              # 是否启用
+  keep_temp: true            # 保留中间文件
+  schema_file: "./output/schema.final.json"  # 仅抽取模式时，指定已有 schema 文件
+  input:
+    path: "./pdf"            # 目录路径
+    pattern: "*.pdf"         # 匹配模式
+  # 独立 API 配置（可选，不设置则使用全局 api）
+  # api:
+  #   model: "doubao-seed-1-6-thinking-250715"
+  #   api_key_env: "ARK_API_KEY_EXTRACT"
+
+# 审核阶段
+# 有两种使用模式：
+# 模式1: 单阶段单文件审核（调试用） - 使用 --stage review 运行
+# 模式2: 融合 extract 输出（完整流程时自动执行）
+review:
+  enabled: true              # 是否启用审核
+  max_retries: 2             # 大错误最大重抽次数
+  evaluation_log: "file_eva.log"  # 评价日志文件名（相对于 output.dir）
+  
+  # ========== 模式1: 单阶段单文件审核==========
+  input:
+    pdf_file: "./pdf/my.pdf"                        # 源 PDF 文件
+    extract_json: "./output/my/my_extract.json"     # 对应的抽取结果 JSON
+    schema_file: "./output/schema.final.json"       # Schema 文件
+  
+  # ========== 模式2: 融合 extract 输出（完整流程）=========
+  # 此模式下，extract 完成后自动调用 review，无需配置 input
+  # 只需设置 enabled: true 即可
+  #
+  # 如需批量审核已有的 extract 结果目录：
+  # input:
+  #   extract_result_dir: "./output"               # 自动扫描子目录
+  #   schema_file: "./output/schema.final.json"   # Schema 文件
+  
+  # 独立 API 配置（可用其它模型，不配置使用全局api）
+  # api:
+  #   model: "doubao-pro-32k"
+  #   api_key_env: "ARK_API_KEY_REVIEW"
+
+# 输出配置
+output:
+  dir: "./output"            # 输出根目录
+  schema_file: "schema.final.json"  # schema 输出文件名
+
+# 并发控制
+concurrency:
+  max_workers: 2            # 并行处理 PDF 数量
+

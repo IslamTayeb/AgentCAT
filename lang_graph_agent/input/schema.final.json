@@ -1,0 +1,742 @@
+{
+  "catalyst_identity": {
+    "type": "object",
+    "required": true,
+    "description": "Information regarding the identification, composition, and structural classification of the catalyst.",
+    "introduced_in_round": 0,
+    "properties": {
+      "catalyst_name": {
+        "type": "string",
+        "required": true,
+        "description": "The specific name or code assigned to the catalyst in the study.",
+        "introduced_in_round": 0
+      },
+      "active_species": {
+        "type": "array",
+        "required": true,
+        "description": "List of active metal or species responsible for catalysis.",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "element": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "role": {
+              "type": "string",
+              "description": "e.g., active_site, promoter, cocatalyst",
+              "introduced_in_round": 0
+            },
+            "loading_wt_percent": {
+              "type": "number",
+              "introduced_in_round": 0
+            },
+            "state": {
+              "type": "string",
+              "description": "e.g., metallic, oxide, cluster, single_atom",
+              "introduced_in_round": 0
+            }
+          }
+        }
+      },
+      "support_material": {
+        "type": "object",
+        "required": false,
+        "description": "Details about the support material.",
+        "introduced_in_round": 0,
+        "properties": {
+          "name": {
+            "type": "string",
+            "introduced_in_round": 0
+          },
+          "topology": {
+            "type": "string",
+            "description": "e.g., MFI, BEA, wormhole-like",
+            "introduced_in_round": 0
+          },
+          "chemical_composition": {
+            "type": "string",
+            "introduced_in_round": 0
+          },
+          "silica_alumina_ratio": {
+            "type": "number",
+            "description": "Molar ratio of SiO2 to Al2O3, critical for zeolites",
+            "introduced_in_round": 2
+          }
+        }
+      }
+    }
+  },
+  "synthesis_procedure": {
+    "type": "object",
+    "required": false,
+    "description": "methodology used to prepare the catalyst.",
+    "introduced_in_round": 0,
+    "properties": {
+      "method_type": {
+        "type": "string",
+        "description": "e.g., hydrothermal, impregnation, sol-gel",
+        "introduced_in_round": 0,
+        "required": false
+      },
+      "description": {
+        "type": "string",
+        "description": "Textual summary of the synthesis procedure.",
+        "introduced_in_round": 0,
+        "required": false
+      },
+      "key_steps": {
+        "type": "array",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "step_name": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "temperature_celsius": {
+              "type": "number",
+              "introduced_in_round": 0
+            },
+            "time_hours": {
+              "type": "number",
+              "introduced_in_round": 0
+            },
+            "atmosphere": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "agents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "introduced_in_round": 0
+            }
+          }
+        },
+        "required": false
+      }
+    }
+  },
+  "physicochemical_characterization": {
+    "type": "object",
+    "required": false,
+    "description": "Experimental characterization of the catalyst structure and properties.",
+    "introduced_in_round": 0,
+    "properties": {
+      "morphology": {
+        "type": "object",
+        "introduced_in_round": 0,
+        "properties": {
+          "particle_size_nm": {
+            "type": "number",
+            "introduced_in_round": 0
+          },
+          "pore_structure": {
+            "type": "string",
+            "introduced_in_round": 0
+          },
+          "surface_area_m2g": {
+            "type": "number",
+            "introduced_in_round": 0
+          },
+          "pore_volume_cm3g": {
+            "type": "object",
+            "description": "Pore volume details",
+            "introduced_in_round": 1,
+            "properties": {
+              "total": {
+                "type": "number",
+                "introduced_in_round": 1
+              },
+              "micro": {
+                "type": "number",
+                "introduced_in_round": 1
+              }
+            }
+          }
+        },
+        "required": false,
+        "description": "Low priority for purely computational mechanism papers."
+      },
+      "crystallinity_percent": {
+        "type": "number",
+        "description": "Relative crystallinity of the sample (Low priority for purely computational mechanism papers.)",
+        "introduced_in_round": 1,
+        "required": false
+      },
+      "local_structure": {
+        "type": "array",
+        "description": "Spectroscopic data describing the local environment (e.g., EXAFS, XPS, NMR).",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "technique": {
+              "type": "string",
+              "description": "e.g., EXAFS, XPS, NMR",
+              "introduced_in_round": 0
+            },
+            "element": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "assignment": {
+              "type": "string",
+              "description": "e.g., Pt-Pt bond, Pt-O bond, lattice Sn, Paired Al",
+              "introduced_in_round": 0
+            },
+            "value": {
+              "type": "number",
+              "description": "Quantitative value (e.g., CN, bond length, binding energy)",
+              "introduced_in_round": 0
+            },
+            "unit": {
+              "type": "string",
+              "introduced_in_round": 0
+            }
+          }
+        }
+      },
+      "acidity": {
+        "type": "object",
+        "description": "Detailed analysis of acid sites (quantity, type, strength, density).",
+        "introduced_in_round": 1,
+        "properties": {
+          "total_acid_amount": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number",
+                "introduced_in_round": 1
+              },
+              "unit": {
+                "type": "string",
+                "introduced_in_round": 1
+              },
+              "method": {
+                "type": "string",
+                "introduced_in_round": 1
+              }
+            },
+            "introduced_in_round": 1
+          },
+          "bronsted_lewis_distribution": {
+            "type": "array",
+            "introduced_in_round": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "acid_type": {
+                  "type": "string",
+                  "description": "Bronsted or Lewis",
+                  "introduced_in_round": 1
+                },
+                "amount": {
+                  "type": "number",
+                  "introduced_in_round": 1
+                },
+                "unit": {
+                  "type": "string",
+                  "introduced_in_round": 1
+                },
+                "method": {
+                  "type": "string",
+                  "description": "Method used (e.g., Py-IR)",
+                  "introduced_in_round": 1
+                },
+                "strength": {
+                  "type": "string",
+                  "description": "e.g., weak, strong",
+                  "introduced_in_round": 1
+                }
+              }
+            }
+          },
+          "acid_site_density": {
+            "type": "object",
+            "description": "Measures of acid site proximity or density (e.g., paired Al).",
+            "introduced_in_round": 1,
+            "properties": {
+              "description": {
+                "type": "string",
+                "introduced_in_round": 1
+              },
+              "quantitative_metrics": {
+                "type": "array",
+                "introduced_in_round": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "metric_name": {
+                      "type": "string",
+                      "introduced_in_round": 1
+                    },
+                    "value": {
+                      "type": "number",
+                      "introduced_in_round": 1
+                    },
+                    "unit": {
+                      "type": "string",
+                      "introduced_in_round": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "defect_sites": {
+        "type": "array",
+        "description": "Characterization of defects such as silanol nests. (Low priority for purely computational mechanism papers.)",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "e.g., Si-OH, Sn-OH",
+              "introduced_in_round": 0
+            },
+            "evidence_method": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "role": {
+              "type": "string",
+              "description": "Role in catalysis or structure",
+              "introduced_in_round": 0
+            }
+          }
+        },
+        "required": false
+      }
+    }
+  },
+  "catalytic_performance": {
+    "type": "object",
+    "required": false,
+    "description": "Quantitative performance metrics of the catalyst.",
+    "introduced_in_round": 0,
+    "properties": {
+      "reaction_type": {
+        "type": "string",
+        "description": "e.g., Propane Dehydrogenation",
+        "introduced_in_round": 0
+      },
+      "experiments": {
+        "type": "array",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "conditions": {
+              "type": "object",
+              "properties": {
+                "temperature_celsius": {
+                  "type": "number",
+                  "introduced_in_round": 0
+                },
+                "pressure_bar": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false
+                },
+                "GHSV_ml_g_h": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false,
+                  "description": "(Redundant with space_velocity; keep if explicitly reported.)",
+                  "deprecated": true
+                },
+                "space_velocity": {
+                  "type": "object",
+                  "description": "Generic space velocity field (e.g. WHSV)",
+                  "introduced_in_round": 1,
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "introduced_in_round": 1
+                    },
+                    "unit": {
+                      "type": "string",
+                      "introduced_in_round": 1
+                    }
+                  }
+                },
+                "feed_composition": {
+                  "type": "string",
+                  "introduced_in_round": 0,
+                  "required": false
+                },
+                "reaction_mode": {
+                  "type": "string",
+                  "description": "e.g., continuous_flow, pulse",
+                  "introduced_in_round": 1,
+                  "required": false
+                },
+                "reactor_configuration": {
+                  "type": "string",
+                  "description": "Configuration of the catalyst system, e.g., in-situ, ex-situ",
+                  "introduced_in_round": 2,
+                  "required": false
+                },
+                "biomass_feedstock": {
+                  "type": "string",
+                  "description": "Specific biomass source used, e.g., Pine sawdust, Algae",
+                  "introduced_in_round": 2,
+                  "required": false
+                },
+                "technology_readiness_level": {
+                  "type": "number",
+                  "description": "Assessed TRL level of the experimental setup (1-9)",
+                  "introduced_in_round": 2,
+                  "required": false
+                }
+              },
+              "introduced_in_round": 0
+            },
+            "metrics": {
+              "type": "object",
+              "properties": {
+                "conversion_percent": {
+                  "type": "number",
+                  "introduced_in_round": 0
+                },
+                "selectivity_percent": {
+                  "type": "number",
+                  "introduced_in_round": 0
+                },
+                "product_yield_percent": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false,
+                  "description": "(Often derivable from conversion × selectivity; record only if explicitly provided.)"
+                },
+                "reaction_indices": {
+                  "type": "array",
+                  "description": "Special calculated indices like HTI or olefin ratios",
+                  "introduced_in_round": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "introduced_in_round": 1
+                      },
+                      "value": {
+                        "type": "number",
+                        "introduced_in_round": 1
+                      },
+                      "description": {
+                        "type": "string",
+                        "introduced_in_round": 1
+                      }
+                    }
+                  }
+                },
+                "specific_activity": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "introduced_in_round": 0
+                    },
+                    "unit": {
+                      "type": "string",
+                      "introduced_in_round": 0
+                    }
+                  },
+                  "introduced_in_round": 0
+                },
+                "degree_of_deoxygenation_percent": {
+                  "type": "number",
+                  "description": "Percentage of oxygen removed from the feedstock",
+                  "introduced_in_round": 2
+                },
+                "bio_oil_yield_percent": {
+                  "type": "number",
+                  "description": "Yield of the liquid organic fraction",
+                  "introduced_in_round": 2
+                },
+                "coke_yield_percent": {
+                  "type": "number",
+                  "description": "Yield of solid carbonaceous deposits",
+                  "introduced_in_round": 2
+                },
+                "oxygen_content_percent": {
+                  "type": "number",
+                  "description": "Oxygen content in the final product oil",
+                  "introduced_in_round": 2
+                }
+              },
+              "introduced_in_round": 0
+            },
+            "stability": {
+              "type": "object",
+              "properties": {
+                "time_on_stream_h": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false
+                },
+                "deactivation_rate_constant": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false
+                },
+                "inverse_deactivation_coefficient": {
+                  "type": "number",
+                  "introduced_in_round": 0,
+                  "required": false
+                },
+                "coke_deposition_wt_percent": {
+                  "type": "number",
+                  "description": "Weight percent of coke deposited on the catalyst",
+                  "introduced_in_round": 2,
+                  "required": false
+                }
+              },
+              "introduced_in_round": 0,
+              "required": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "reaction_kinetics": {
+    "type": "object",
+    "required": false,
+    "description": "Kinetic parameters derived from experimental data.",
+    "introduced_in_round": 0,
+    "properties": {
+      "apparent_rate_coefficient": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "introduced_in_round": 0
+          },
+          "unit": {
+            "type": "string",
+            "introduced_in_round": 0
+          }
+        },
+        "introduced_in_round": 0,
+        "required": false
+      },
+      "kinetic_model_description": {
+        "type": "string",
+        "introduced_in_round": 0,
+        "required": false
+      }
+    }
+  },
+  "reaction_mechanism": {
+    "type": "object",
+    "required": false,
+    "description": "Information regarding the mechanistic pathway, intermediates, and theoretical calculations.",
+    "introduced_in_round": 0,
+    "properties": {
+      "proposed_mechanism": {
+        "type": "string",
+        "description": "Name or description of the mechanism (e.g., hydroxy-assisted)",
+        "introduced_in_round": 0,
+        "required": false
+      },
+      "dual_cycle_analysis": {
+        "type": "string",
+        "description": "Discussion on aromatic-based vs alkene-based cycles (Mostly relevant to MTH/hydrocarbon-pool literature; often absent for other reactions.)",
+        "introduced_in_round": 1,
+        "required": false
+      },
+      "elementary_steps": {
+        "type": "array",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "step_description": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "reactants": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "introduced_in_round": 0
+            },
+            "products": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "introduced_in_round": 0
+            },
+            "energy_barrier_eV": {
+              "type": "number",
+              "introduced_in_round": 0
+            },
+            "reaction_energy_eV": {
+              "type": "number",
+              "introduced_in_round": 0
+            },
+            "active_site_involvement": {
+              "type": "array",
+              "required": false,
+              "description": "Optional mapping of this elementary step to the catalytic site(s) involved and their functional roles (kept low-detail for broad applicability, especially computational mechanism papers).",
+              "introduced_in_round": 4,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "site_type": {
+                    "type": "string",
+                    "required": false,
+                    "description": "General site type (e.g., Brønsted acid site, Lewis acid site, framework oxygen, metal site).",
+                    "introduced_in_round": 4
+                  },
+                  "site_label": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Label or identifier used in the paper/model (e.g., H1, O2, Al(T12), Pt1) or a short descriptor (e.g., bridging OH).",
+                    "introduced_in_round": 4
+                  },
+                  "role": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Functional role of the site in this step (e.g., proton donor, hydrogen-bonding/adsorption, stabilizes carbocation, forms alkoxide, hydride/proton shuttle).",
+                    "introduced_in_round": 4
+                  },
+                  "evidence": {
+                    "type": "string",
+                    "required": false,
+                    "description": "How the involvement is supported (e.g., author statement, geometry change, charge analysis, TS imaginary frequency).",
+                    "introduced_in_round": 4
+                  },
+                  "key_parameters": {
+                    "type": "array",
+                    "required": false,
+                    "description": "Optional minimal numeric/structural parameters supporting the site assignment (e.g., O-H distance, adsorption energy).",
+                    "introduced_in_round": 4,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "parameter_name": {
+                          "type": "string",
+                          "required": false,
+                          "introduced_in_round": 4
+                        },
+                        "value": {
+                          "type": "number",
+                          "required": false,
+                          "introduced_in_round": 4
+                        },
+                        "unit": {
+                          "type": "string",
+                          "required": false,
+                          "introduced_in_round": 4
+                        },
+                        "notes": {
+                          "type": "string",
+                          "required": false,
+                          "introduced_in_round": 4
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "isotopic_labeling_studies": {
+        "type": "array",
+        "description": "Results from isotopic switching or co-feeding experiments.",
+        "introduced_in_round": 1,
+        "items": {
+          "type": "object",
+          "properties": {
+            "labeling_type": {
+              "type": "string",
+              "description": "e.g., pulse switching, co-feeding",
+              "introduced_in_round": 1
+            },
+            "tracer_molecule": {
+              "type": "string",
+              "introduced_in_round": 1
+            },
+            "method_description": {
+              "type": "string",
+              "introduced_in_round": 1
+            },
+            "key_observation": {
+              "type": "string",
+              "description": "e.g., 13C incorporation trend",
+              "introduced_in_round": 1
+            },
+            "mechanistic_inference": {
+              "type": "string",
+              "introduced_in_round": 1
+            }
+          }
+        },
+        "required": false
+      },
+      "computational_details": {
+        "type": "object",
+        "introduced_in_round": 0,
+        "properties": {
+          "theory": {
+            "type": "string",
+            "description": "e.g., DFT",
+            "introduced_in_round": 0
+          },
+          "software": {
+            "type": "string",
+            "introduced_in_round": 0
+          },
+          "model_system_description": {
+            "type": "string",
+            "introduced_in_round": 0
+          }
+        }
+      },
+      "spectroscopic_evidence": {
+        "type": "array",
+        "description": "In-situ spectroscopic data supporting the mechanism.",
+        "introduced_in_round": 0,
+        "items": {
+          "type": "object",
+          "properties": {
+            "technique": {
+              "type": "string",
+              "description": "e.g., In-situ DRIFTS",
+              "introduced_in_round": 0
+            },
+            "probe_molecule": {
+              "type": "string",
+              "introduced_in_round": 0
+            },
+            "observation": {
+              "type": "string",
+              "description": "e.g., formation of OD bands",
+              "introduced_in_round": 0
+            },
+            "interpretation": {
+              "type": "string",
+              "introduced_in_round": 0
+            }
+          }
+        },
+        "required": false
+      }
+    }
+  }
+}

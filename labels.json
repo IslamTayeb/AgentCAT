@@ -1,0 +1,15 @@
+{
+  "labels": [
+    "acidity",
+    "activeSite",
+    "heterogeneousCatalyst",
+    "homogeneousCatalyst",
+    "molecular",
+    "propertyCategory",
+    "propertyNode",
+    "reactionNode",
+    "zeolite"
+  ],
+  "last_updated": "2026-02-03T23:41:38.495496",
+  "description": "记录当前 Neo4j 中所有的节点标签"
+}

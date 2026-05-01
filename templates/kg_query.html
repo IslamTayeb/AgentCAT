@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemical Catalysis Knowledge Graph</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --drawer-width: 260px;
+            --drawer-collapsed: 36px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* 顶部标题 - 更紧凑 */
+        .header-section {
+            background: var(--card-bg);
+            padding: 10px 0;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        h1::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 18px;
+            background: linear-gradient(180deg, var(--primary-color), var(--primary-hover));
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .container-fluid {
+            padding: 0 20px;
+            max-width: 100%;
+        }
+
+        /* 查询区域 - 更紧凑 */
+        .query-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin: 12px 20px;
+        }
+
+        .query-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        #query-text {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            outline: none;
+            background-color: #f9fafb;
+            transition: all 0.2s ease;
+        }
+
+        #query-text:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        #submit-btn {
+            padding: 0 18px;
+            font-size: 13px;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        #submit-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .query-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .checkbox-label input {
+            width: 13px;
+            height: 13px;
+            accent-color: var(--primary-color);
+        }
+
+        .result-info {
+            display: flex;
+            gap: 12px;
+            color: var(--text-secondary);
+        }
+
+        .result-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-message {
+            margin-top: 8px;
+            background-color: #fef2f2;
+            color: #b91c1c;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #fecaca;
+            display: none;
+            font-size: 12px;
+        }
+
+        /* 主内容区 */
+        .main-wrapper {
+            display: flex;
+            margin: 0 20px 12px 20px;
+            gap: 0;
+            height: calc(100vh - 130px);
+            min-height: 450px;
+        }
+
+        /* 图谱区域 */
+        .graph-container {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: margin-right 0.3s ease;
+        }
+
+        .graph-header {
+            background: #fafbfc;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .graph-header .glyphicon {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        #graph-chart {
+            width: 100%;
+            height: calc(100% - 40px);
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            flex-direction: column;
+            gap: 8px;
+            color: var(--primary-color);
+            font-size: 13px;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 右侧抽屉 */
+        .drawer-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 8px;
+        }
+
+        .drawer {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .drawer.collapsed {
+            width: var(--drawer-collapsed);
+        }
+
+        .drawer.expanded {
+            width: var(--drawer-width);
+        }
+
+        /* 抽屉标签（收起时显示） */
+        .drawer-tab {
+            width: var(--drawer-collapsed);
+            min-width: var(--drawer-collapsed);
+            background: #fafbfc;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            padding: 12px 0;
+        }
+
+        .drawer-tab:hover {
+            background: #f0f4f8;
+        }
+
+        .drawer-tab .tab-icon {
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .drawer-tab .tab-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: 2px;
+        }
+
+        .drawer-tab .tab-arrow {
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            transition: transform 0.3s;
+        }
+
+        .drawer.expanded .drawer-tab .tab-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* 抽屉内容 */
+        .drawer-content {
+            flex: 1;
+            overflow: hidden;
+            opacity: 0;
+            width: 0;
+            transition: opacity 0.2s, width 0.3s;
+        }
+
+        .drawer.expanded .drawer-content {
+            opacity: 1;
+            width: calc(var(--drawer-width) - var(--drawer-collapsed));
+        }
+
+        .drawer-inner {
+            padding: 12px;
+            width: calc(var(--drawer-width) - var(--drawer-collapsed));
+        }
+
+        /* 图例样式 */
+        .hint-box {
+            background-color: #eff6ff;
+            border-left: 3px solid var(--primary-color);
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            font-size: 11px;
+            color: #1e40af;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        .legend-item {
+            font-size: 12px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 6px;
+            border-radius: 4px;
+            margin: 0 -6px 4px -6px;
+            transition: background 0.15s;
+        }
+
+        .legend-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .legend-item.disabled {
+            opacity: 0.4;
+            filter: grayscale(100%);
+            text-decoration: line-through;
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            margin-right: 8px;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-lines {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 10px;
+            color: #666;
+        }
+
+        .legend-lines>div {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .legend-lines span {
+            display: inline-block;
+            width: 20px;
+            margin-right: 6px;
+        }
+
+        /* 关系列表 */
+        .relation-table-container {
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+            font-size: 11px;
+        }
+
+        .table>thead>tr>th {
+            background-color: #f9fafb;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table>tbody>tr>td {
+            padding: 6px 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table>tbody>tr:hover {
+            background-color: #f0f7ff;
+        }
+
+        .label-info {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+
+        /* Cypher面板 */
+        .cypher-panel {
+            margin: 0 20px 12px 20px;
+        }
+
+        .cypher-panel .panel {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 0;
+        }
+
+        .cypher-panel .panel-heading {
+            background: #fafbfc !important;
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cypher-panel .panel-heading:hover {
+            background: #f3f4f6 !important;
+        }
+
+        #cypher-code {
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            background-color: #111827;
+            color: #10b981;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            margin: 0;
+        }
+
+        .panel-body.padded {
+            padding: 12px;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container-fluid">
+            <h1>Chemical Catalysis Knowledge Graph</h1>
+        </div>
+    </div>
+
+    <!-- 查询区域 -->
+    <div class="query-section">
+        <div class="query-input-group">
+            <input type="text" id="query-text" placeholder="Please enter your query, e.g., What metals are in Pt@MFI catalyst?">
+            <button id="submit-btn"><i class="glyphicon glyphicon-search"></i> Search</button>
+        </div>
+        <div class="query-options">
+            <label class="checkbox-label" for="use-agent">
+                <input type="checkbox" id="use-agent"> Enable Intelligent Planning Mode
+            </label>
+            <span class="result-info" id="result-info" style="display: none;">
+                <span id="node-count">Nodes: 0</span>
+                <span id="link-count">Links: 0</span>
+                <span id="query-time">Time: 0ms</span>
+            </span>
+        </div>
+        <div id="error-message" class="error-message"></div>
+    </div>
+
+    <!-- 主内容：图谱 + 抽屉 -->
+    <div class="main-wrapper">
+        <!-- 图谱区域 -->
+        <div class="graph-container">
+            <div class="graph-header">
+                <i class="glyphicon glyphicon-eye-open"></i> Knowledge Graph Visualization
+            </div>
+            <div id="loading" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <span>Loading...</span>
+            </div>
+            <div id="graph-chart"></div>
+        </div>
+
+        <!-- 右侧抽屉 -->
+        <div class="drawer-container">
+            <!-- 图例抽屉 -->
+            <div class="drawer collapsed" id="legend-drawer">
+                <div class="drawer-tab" onclick="toggleDrawer('legend-drawer')">
+                    <i class="glyphicon glyphicon-list-alt tab-icon"></i>
+                    <span class="tab-text">Legend</span>
+                    <i class="glyphicon glyphicon-chevron-left tab-arrow"></i>
+                </div>
+                <div class="drawer-content">
+                    <div class="drawer-inner">
+                        <div class="hint-box">
+                            💡 Hover to highlight, drag to adjust layout
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('Zeolite')" id="legend-Zeolite">
+                            <span class="legend-color" style="background-color:#FFD700;"></span> <b>Zeolite</b>
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('ActiveSite')" id="legend-ActiveSite">
+                            <span class="legend-color" style="background-color:#b57c82;"></span> <b>ActiveSite</b>
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('Category')" id="legend-Category">
+                            <span class="legend-color"
+                                style="background-color:#d4d4d8; border: 1px solid #52525b;"></span> <b>Category</b>
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('Property')" id="legend-Property">
+                            <span class="legend-color" style="background-color:#e4e4e7;"></span> <b>Property</b>
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('Molecular')" id="legend-Molecular">
+                            <span class="legend-color" style="background-color:#FF5733;"></span> <b>Molecular</b>
+                        </div>
+                        <div class="legend-item" onclick="toggleLegend('Reaction')" id="legend-Reaction">
+                            <span class="legend-color" style="background-color:#66B3FF;"></span> <b>Reaction</b>
+                        </div>
+                        <div class="legend-lines">
+                            <div><span style="border-top: 2px dashed #9ca3af;"></span> Property/Weak</div>
+                            <div><span style="border-top: 2px solid #4b5563;"></span> Structure/Reaction Flow</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 关系列表抽屉 -->
+            <div class="drawer collapsed" id="relation-drawer" style="flex: 1;">
+                <div class="drawer-tab" onclick="toggleDrawer('relation-drawer')">
+                    <i class="glyphicon glyphicon-resize-small tab-icon"></i>
+                    <span class="tab-text">Relation List</span>
+                    <i class="glyphicon glyphicon-chevron-left tab-arrow"></i>
+                </div>
+                <div class="drawer-content">
+                    <div class="drawer-inner" style="padding: 0; height: 100%;">
+                        <div class="relation-table-container" style="height: 100%;">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Source</th>
+                                        <th>Relation</th>
+                                        <th>Target</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="relation-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cypher面板 -->
+    <div class="cypher-panel">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="button" data-toggle="collapse" href="#cypher-collapse">
+                <i class="glyphicon glyphicon-console" style="color: var(--text-secondary);"></i> Cypher Query (Click to expand)
+                <i class="glyphicon glyphicon-chevron-down pull-right" style="font-size: 10px;"></i>
+            </div>
+            <div id="cypher-collapse" class="panel-collapse collapse">
+                <div class="panel-body padded">
+                    <pre id="cypher-code"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script>
+        // 抽屉切换
+        function toggleDrawer(id) {
+            var drawer = document.getElementById(id);
+            drawer.classList.toggle('collapsed');
+            drawer.classList.toggle('expanded');
+            // 延迟触发图表resize
+            setTimeout(function () { chart.resize(); }, 350);
+        }
+
+        // 配置
+        var typeConfig = {
+            "zeolite": { color: "#FFD700", category: 0, size: 60, name: "Zeolite" },
+            "activeSite": { color: "#b57c82", category: 1, size: 45, name: "ActiveSite" },
+            "propertyCategory": { color: "#e4e4e7", category: 2, size: 40, border: 4, name: "Category" },
+            "propertyNode": { color: "#e4e4e7", category: 3, size: 30, border: 1, name: "Property" },
+            "molecular": { color: "#FF5733", category: 4, size: 45, name: "Molecular" },
+            "reactionNode": { color: "#66B3FF", category: 5, size: 35, name: "Reaction" },
+            "default": { color: "#9ca3af", category: 6, size: 30, name: "Unknown" }
+        };
+
+        function wrapText(text, maxLength) {
+            if (!text) return "";
+            text = String(text).replace(/\\/g, '\n');
+            if (text.length <= maxLength && text.indexOf('\n') === -1) return text;
+            var result = "", currentLineLength = 0;
+            for (var i = 0; i < text.length; i++) {
+                var char = text[i];
+                if (char === '\n') { result += '\n'; currentLineLength = 0; continue; }
+                result += char;
+                currentLineLength++;
+                if (currentLineLength >= maxLength) {
+                    if (' ,-'.indexOf(char) > -1) { result += "\n"; currentLineLength = 0; }
+                    else if (currentLineLength >= maxLength + 5) { result += "\n"; currentLineLength = 0; }
+                }
+            }
+            return result;
+        }
+
+        var chart = echarts.init(document.getElementById('graph-chart'));
+        window.addEventListener('resize', function () { chart.resize(); });
+
+        function toggleLegend(name) {
+            chart.dispatchAction({ type: 'legendToggleSelect', name: name });
+        }
+
+        chart.on('legendselectchanged', function (params) {
+            var el = document.getElementById('legend-' + params.name);
+            if (el) {
+                if (params.selected[params.name]) el.classList.remove('disabled');
+                else el.classList.add('disabled');
+            }
+        });
+
+        function renderGraph(nodes, links) {
+            var processedNodes = [], nodeMap = new Set();
+
+            nodes.forEach(node => {
+                var nid = String(node.id);
+                nodeMap.add(nid);
+                var type = node.label || (node.labels && node.labels[0]) || 'default';
+                if (type === 'Catalyst') type = 'zeolite';
+                if (type === 'AdsorptionSite') type = 'activeSite';
+                if (type === 'Intermediate') type = 'molecular';
+                if (type === 'ElementaryStep') type = 'reactionNode';
+                var conf = typeConfig[type] || typeConfig['default'];
+
+                processedNodes.push({
+                    id: nid, name: node.name, value: node.value,
+                    symbolSize: conf.size, category: conf.category, nodeType: type,
+                    itemStyle: {
+                        color: conf.color,
+                        borderColor: conf.border === 1 ? '#9ca3af' : (conf.border === 4 ? '#52525b' : conf.color),
+                        borderWidth: conf.border || 0,
+                        shadowBlur: 5, shadowColor: 'rgba(0,0,0,0.2)'
+                    },
+                    label: {
+                        show: true,
+                        color: (type === 'propertyNode' || type === 'propertyCategory') ? '#374151' : '#000',
+                        fontSize: type === 'reactionNode' ? 10 : 11,
+                        formatter: params => wrapText(params.data.name, 12)
+                    }
+                });
+            });
+
+            var processedLinks = [], tableHtml = "";
+            links.forEach(link => {
+                var srcId = String(link.source), tgtId = String(link.target);
+                if (!nodeMap.has(srcId) || !nodeMap.has(tgtId)) return;
+                var srcNode = processedNodes.find(n => n.id === srcId);
+                var tgtNode = processedNodes.find(n => n.id === tgtId);
+                var isDashed = tgtNode && (tgtNode.nodeType === 'propertyNode' || tgtNode.nodeType === 'propertyCategory');
+
+                processedLinks.push({
+                    source: srcId, target: tgtId, value: link.value,
+                    symbol: ['none', 'arrow'], symbolSize: [5, 10],
+                    lineStyle: { width: isDashed ? 1.5 : 2, type: isDashed ? 'dashed' : 'solid', opacity: 0.6, color: isDashed ? '#9ca3af' : '#6b7280', curveness: 0.1 }
+                });
+                tableHtml += `<tr><td>${srcNode.name}</td><td><span class='label label-info'>${link.value}</span></td><td>${tgtNode.name}</td></tr>`;
+            });
+
+            document.getElementById("relation-tbody").innerHTML = tableHtml;
+
+            var categories = [{ name: 'Zeolite' }, { name: 'ActiveSite' }, { name: 'Category' }, { name: 'Property' }, { name: 'Molecular' }, { name: 'Reaction' }, { name: 'Unknown' }];
+
+            chart.setOption({
+                backgroundColor: '#fff',
+                tooltip: {
+                    trigger: 'item', backgroundColor: 'rgba(255,255,255,0.95)', borderColor: '#e5e7eb', borderWidth: 1,
+                    textStyle: { color: '#1f2937' }, extraCssText: 'box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 8px;',
+                    formatter: params => params.dataType === 'node'
+                        ? `<div style="padding:4px;"><strong style="color:#3b82f6">${params.data.name}</strong><br/><span style="color:#6b7280;font-size:11px;">Type: ${params.data.nodeType}</span></div>`
+                        : `<div style="padding:4px;"><strong>${params.data.value}</strong><br/><span style="font-size:11px;">${params.data.source} → ${params.data.target}</span></div>`
+                },
+                legend: [{ show: false, data: categories.map(a => a.name) }],
+                series: [{
+                    type: 'graph', layout: 'force', data: processedNodes, links: processedLinks, categories: categories,
+                    roam: true, draggable: true, focusNodeAdjacency: true,
+                    emphasis: { focus: 'adjacency', lineStyle: { width: 3 } },
+                    force: { repulsion: 1000, gravity: 0.08, edgeLength: [60, 180], layoutAnimation: true },
+                    lineStyle: { curveness: 0.1 }
+                }]
+            });
+        }
+
+        chart.setOption({ title: { text: '', left: 'center', top: 'center', textStyle: { color: '#9ca3af' } } });
+
+        document.getElementById('submit-btn').addEventListener('click', function () {
+            const queryText = document.getElementById('query-text').value.trim();
+            if (!queryText) { alert('Please enter a query'); return; }
+
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('result-info').style.display = 'none';
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('cypher-collapse').classList.remove('in');
+
+            const startTime = Date.now();
+            const useAgent = document.getElementById('use-agent').checked;
+            const apiEndpoint = useAgent ? '/query/agent' : '/query';
+            document.querySelector('#loading span').textContent = useAgent ? 'Planning...' : 'Searching...';
+
+            fetch(apiEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: queryText }) })
+                .then(response => response.ok ? response.json() : response.json().then(err => { throw new Error(err.error || 'Search failed'); }))
+                .then(data => {
+                    document.getElementById('node-count').textContent = `Nodes: ${data.node_count}`;
+                    document.getElementById('link-count').textContent = `Links: ${data.link_count}`;
+                    document.getElementById('query-time').textContent = `Time: ${Date.now() - startTime}ms`;
+                    document.getElementById('result-info').style.display = 'flex';
+                    document.getElementById('cypher-code').textContent = data.cypher || "(Multi-step Query)";
+
+                    if (data.nodes && data.nodes.length > 0) renderGraph(data.nodes, data.links);
+                    else {
+                        chart.clear();
+                        chart.setOption({ title: { text: 'No results found', left: 'center', top: 'center', textStyle: { color: '#6b7280' } } });
+                        document.getElementById("relation-tbody").innerHTML = "<tr><td colspan='3' style='text-align:center;padding:12px;color:#9ca3af;'>No Data</td></tr>";
+                    }
+                })
+                .catch(error => { document.getElementById('error-message').textContent = error.message; document.getElementById('error-message').style.display = 'block'; chart.clear(); })
+                .finally(() => { document.getElementById('loading').style.display = 'none'; document.getElementById('submit-btn').disabled = false; });
+        });
+
+        document.getElementById('query-text').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('submit-btn').click(); });
+
+        window.onload = function () {
+            document.getElementById('loading').style.display = 'flex';
+            document.querySelector('#loading span').textContent = 'Loading graph overview...';
+            fetch('/query/full')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) throw new Error(data.error);
+                    document.getElementById('node-count').textContent = `节点: ${data.node_count}`;
+                    document.getElementById('link-count').textContent = `关系: ${data.link_count}`;
+                    document.getElementById('result-info').style.display = 'flex';
+                    document.getElementById('cypher-code').textContent = data.cypher;
+                    if (data.nodes && data.nodes.length > 0) renderGraph(data.nodes, data.links);
+                    else chart.setOption({ title: { text: 'Graph has no data', left: 'center', top: 'center' } });
+                })
+                .catch(() => chart.setOption({ title: { text: 'Please enter a query to search', left: 'center', top: 'center', textStyle: { color: '#9ca3af' } } }))
+                .finally(() => { document.getElementById('loading').style.display = 'none'; });
+        };
+    </script>
+</body>
+
+</html>
