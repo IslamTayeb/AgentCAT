@@ -1,4 +1,19 @@
-# Code Repository README
+# AgentCAT (Mirror)
+
+> **This is a mirror of the anonymous review repository at
+> [anonymous.4open.science/r/agentcat-E69B](https://anonymous.4open.science/r/agentcat-E69B).**
+>
+> Original paper: Yang, W. et al. "AgentCAT: An LLM Agent for Extracting and
+> Analyzing Catalytic Reaction Data from Chemical Engineering Literature."
+> [arXiv:2602.18479](https://arxiv.org/abs/2602.18479), Feb 2026.
+>
+> Mirrored here for research comparison purposes only. All credit to the
+> original authors. This repo will be replaced with a proper fork if/when
+> the authors publish a public GitHub repository.
+
+---
+
+# Original README
 
 ## Overview
 This repository contains agent implementations for a multi-stage pipeline:
